@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8" />
+    <title>ارسال ایمیل</title>
+
+    <!-- بارگذاری فایل‌های CSS و JS مربوط به CKEditor -->
+    {{ form.media }}
+</head>
+<body>
+    <h1>فرم ارسال ایمیل</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">ارسال</button>
+    </form>
+</body>
+</html>

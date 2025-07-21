@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}سایت من{% endblock %}</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            direction: rtl;
+            text-align: center;
+        }
+        form {
+            margin: 20px auto;
+        }
+        input, button {
+            margin: 8px;
+            padding: 10px;
+        }
+        .messages {
+            color: red;
+        }
+        a {
+            margin: 10px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>سایت من</h1>
+        <nav>
+            <a href="{% url 'home' %}">خانه</a>
+            <a href="{% url 'login' %}">ورود</a>
+            <a href="{% url 'signup' %}">ثبت‌نام</a>
+        </nav>
+        <hr>
+    </header>
+
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+
+    <footer>
+        <hr>
+        <p>تمام حقوق محفوظ است</p>
+    </footer>
+</body>
+</html>
