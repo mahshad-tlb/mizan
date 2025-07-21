@@ -37,7 +37,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_jalali',
     'users',
+    'ckeditor',
+    'emails'
+
 
 ]
 
@@ -116,19 +120,54 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
-
-STATICFILES_DIRS= [
-
-    BASE_DIR / 'static',
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',  # حتما این فولدر را بساز در پروژه‌ات
 ]
-
-
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+
+# Email backend (برای نمایش ایمیل‌ها در کنسول)
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST_USER = 'test@example.com'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,  # برای غیرفعال نکردن لاگرهای پیش‌فرض
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'INFO',  # حداقل سطح لاگی که ذخیره می‌شود
+            'class': 'logging.FileHandler',
+            'filename': 'logs/myapp.log',  # مسیر فایل لاگ (یک پوشه بساز به نام logs)
+            'formatter': 'verbose',
+        },
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file', 'console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        # لاگر مخصوص برنامه خودت (مثلا users app)
+        'users': {
+            'handlers': ['file', 'console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+    },
+}
