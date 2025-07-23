@@ -1,3 +1,4 @@
+
 from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
 
@@ -14,6 +15,6 @@ class Command(BaseCommand):
 
             if not User.objects.filter(username=username).exists():
                 User.objects.create_user(username=username, email=email, password=password)
-                self.stdout.write(self.style.SUCCESS(f'✅ کاربر {username} ساخته شد.'))
+                self.stdout.write(self.style.SUCCESS(f'✅ user {username} was created.'))
             else:
                 self.stdout.write(self.style.WARNING(f'⚠️ کاربر {username} از قبل وجود دارد.'))

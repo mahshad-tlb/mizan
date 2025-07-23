@@ -38,6 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'users',
+    'storages',
+    'comments.apps.CommentsConfig',
+    'ckeditor',
 
 ]
 
@@ -132,3 +135,26 @@ STATICFILES_DIRS= [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'DEBUG',  # اینجا روی DEBUG بذار که همه لاگ‌ها بیاد
+    },
+    'loggers': {
+        # برای logger فایل limited_admin_site.py
+        'comments.limited_admin_site': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        # برای logger فایل limited_admin_site.py (اسم ماژول میتونه متغیر باشه، براساس __name__)
+        # اگر در فایل limited_admin_site.py لاگر رو با __name__ ساختی، اینجا نامش همون باید باشه
+    },
+}

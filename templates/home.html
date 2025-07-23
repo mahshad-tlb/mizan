@@ -2,4 +2,15 @@
 {% block title %}خانه{% endblock %}
 {% block content %}
 <h2>به صفحه اصلی خوش آمدید، {{ username }} 😊</h2>
+
+<h3>ارسال نظر</h3>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">ثبت نظر</button>
+</form>
+
+
+
+
 {% endblock %}
