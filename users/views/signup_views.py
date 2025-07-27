@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from users.models import Users
+from users.models import Users, SecondaryPassword
 from users.forms.signup_forms import SignupForm, LoginForm
 import logging
 from django.contrib.auth.hashers import make_password, check_password
 
-logger = logging.getLogger(__name__)
+secondary_logger = logging.getLogger('secondary_password')
+
 
 def signup_view(request):
     if request.method == "POST":
@@ -15,35 +16,55 @@ def signup_view(request):
             password = form.cleaned_data['password']
             email = form.cleaned_data['email']
             phone_number = form.cleaned_data['phone_number']
-            cleaned_phone_number=f'+98{phone_number}'
+            secondary_password = form.cleaned_data['secondary_password']  # ✅ اصلاح شد
 
+            cleaned_phone_number = f'+98{phone_number}'
 
-            # چک کردن وجود ایمیل یا نام‌کاربری
+            # لاگ گرفتن از رمز دوم خام
+            secondary_logger.debug(f"🔐 رمز دوم وارد شده برای {username}: {secondary_password}")  # ✅ اصلاح شد
+
+            # چک کردن تکراری بودن
             if Users.objects.filter(email=email).exists():
-                logger.warning(f"Signup failed due to duplicate email: {email}")
                 messages.error(request, "این ایمیل قبلاً ثبت شده است.")
                 return render(request, "signup.html", {"form": form})
 
             if Users.objects.filter(username=username).exists():
-                logger.warning(f"Signup failed due to duplicate username: {username}")
                 messages.error(request, "این نام کاربری قبلاً ثبت شده است.")
                 return render(request, "signup.html", {"form": form})
 
-            # ذخیره‌سازی پسورد هش شده
-            hashed_password = make_password(password)
+            if Users.objects.filter(phone_number=cleaned_phone_number).exists():
+                messages.error(request, "این شماره موبایل قبلاً ثبت شده است.")
+                return render(request, "signup.html", {"form": form})
 
+            # ساخت کاربر
+            hashed_password = make_password(password)
             user = Users.objects.create(
                 username=username,
                 password=hashed_password,
                 email=email,
                 phone_number=cleaned_phone_number
             )
-            logger.info(f"User signed up successfully: {user.email}")
+
+            # هش کردن رمز دوم
+            hashed_secondary = make_password(secondary_password)
+            secondary_logger.debug(f"🔑 رمز دوم هش‌شده برای {username}: {hashed_secondary}")  # ✅ اصلاح شد
+
+            # ذخیره رمز دوم
+            SecondaryPassword.objects.create(
+                user=user,
+                password=hashed_secondary
+            )
+            secondary_logger.info(f"✅ رمز دوم برای کاربر {username} با موفقیت ذخیره شد.")
+
             messages.success(request, "ثبت‌نام با موفقیت انجام شد.")
             return redirect('login')
     else:
         form = SignupForm()
+
     return render(request, "signup.html", {"form": form})
+
+
+
 
 def login_view(request):
     if request.method == "POST":
@@ -54,14 +75,14 @@ def login_view(request):
 
             try:
                 user = Users.objects.get(username=username)
-                # بررسی پسورد هش شده
                 if check_password(password, user.password):
+                    # ورود موفق (بدون بررسی رمز دوم)
                     request.session['user_id'] = user.id
                     logger.info(f"User logged in successfully: {user.email}")
                     return redirect('home')
                 else:
                     messages.error(request, "نام کاربری یا رمز عبور اشتباه است.")
-                    logger.warning(f"Failed login attempt for user: {username} due to wrong password")
+                    logger.warning(f"Failed login for user: {username} due to wrong password")
             except Users.DoesNotExist:
                 messages.error(request, "نام کاربری یا رمز عبور اشتباه است.")
                 logger.warning(f"Failed login attempt for non-existent user: {username}")
