@@ -2,8 +2,7 @@ from django.contrib import admin
 from .models import  AdminEmail, Users
 from django.core.mail import send_mail
 from django.contrib import messages
-
-from .models import AdminEmail, Users
+from django import forms
 from .models import Users, SecondaryPassword
 
 
@@ -14,10 +13,6 @@ class UsersAdmin(admin.ModelAdmin):
 
 
 
-
-@admin.register(UploadedFile)
-class UploadedFileAdmin(admin.ModelAdmin):
-    list_display = ('file', 'is_minified', 'uploaded_at')
 
 
 @admin.register(AdminEmail)
@@ -32,7 +27,6 @@ class AdminEmailAdmin(admin.ModelAdmin):
             from_email = "admin@example.com"
             recipient_list = list(Users.objects.values_list("email", flat=True))
 
-            # ارسال ایمیل HTML
             for recipient in recipient_list:
                 send_mail(
                     subject,
