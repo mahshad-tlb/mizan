@@ -71,22 +71,8 @@ class SMSVerificationCode(models.Model):
         verbose_name_plural = "کدهای تأیید پیامکی"
         #fgh
 
-class UploadedFile(models.Model):
-    file = models.FileField(upload_to='uploads/', verbose_name='فایل')
-    is_minified = models.BooleanField(default=False, verbose_name='مینیفای شود؟')
-    uploaded_at = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ آپلود')
 
-    class Meta:
-        verbose_name = 'فایل آپلود شده'
-        verbose_name_plural = 'فایل‌های آپلود شده'
 
-    def __str__(self):
-        return self.file.name
-
-    def save(self, *args, **kwargs):
-        if self.is_minified and self.file.name.lower().endswith(('jpg', 'jpeg', 'png')):
-            self.file = minify_image(self.file)
-        super().save(*args, **kwargs)
 
 
 
