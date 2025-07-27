@@ -60,6 +60,8 @@ INSTALLED_APPS = [
     'storages',
     'comments.apps.CommentsConfig',
     'ckeditor',
+    'uploads',
+
 
 ]
 
