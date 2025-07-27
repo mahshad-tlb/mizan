@@ -156,6 +156,15 @@ STATICFILES_DIRS= [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+
+ARVAN_ACCESS_KEY ='1cec986f-9ea5-4d56-ab11-ff7b041679d2'
+ARVAN_SECRET_KEY = '823fdc456a2720ff59071f5af61c3766227cebf2ca565d1b46bee71d98c8a1a4'
+ARVAN_BUCKET = 'mahshad'
+ARVAN_ENDPOINT = 'https://s3.ir-thr-at1.arvanstorage.ir'
+
+
+import os
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
