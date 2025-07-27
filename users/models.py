@@ -1,22 +1,14 @@
 from django.utils.text import slugify
-from django. db import  models
-from datetime import timedelta
-from django.utils import  timezone
+from django.db import models
+from django.utils import timezone
 from django_jalali.db import models as jmodels
 import logging
-from users.utils.image_utils import minify_image
-from ckeditor.fields import RichTextField
+
+
 logger = logging.getLogger('users')
 
-try:
 
-    ...
-
-except Exception as e:
-    logger.error(f"خطا رخ داد: {e}")
-
-
-class Users(models.Model) :
+class Users(models.Model):
     username = models.CharField(max_length=14, unique=True, verbose_name="نام کاربری")
     email = models.EmailField(unique=True, verbose_name="ایمیل")
     phone_number = models.CharField(max_length=12, unique=True, verbose_name="شماره موبایل")
@@ -31,14 +23,14 @@ class Users(models.Model) :
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return  self.username
+        return self.username
 
     class Meta:
         verbose_name = "کاربر"
         verbose_name_plural = "کاربران"
 
 
-class LoginToken(models.Model) :
+class LoginToken(models.Model):
     user = models.ForeignKey(Users, on_delete=models.CASCADE, verbose_name="کاربر")
     token = models.CharField(max_length=50, unique=True, verbose_name="توکن")
     created_at = jmodels.jDateTimeField(default=timezone.now, verbose_name="تاریخ ایجاد")
@@ -55,21 +47,16 @@ class LoginToken(models.Model) :
 
 class SMSVerificationCode(models.Model):
     phone_number = models.CharField(max_length=11, unique=True, verbose_name="شماره موبایل")
-    code = models.CharField(max_length=10, verbose_name="کد تایید")
-    created_at = jmodels.jDateTimeField(auto_now_add=True, verbose_name="تاریخ ایجاد")
-    updated_at = jmodels.jDateTimeField(auto_now=True, verbose_name="تاریخ بروزرسانی")
-
-    def is_expired(self):
-        expiration_time = self.created_at + timedelta(minutes=5)
-        return timezone.now() > expiration_time
+    code = models.CharField(max_length=6, verbose_name="کد تایید")
+    created_at = jmodels.jDateTimeField(default=timezone.now, verbose_name="تاریخ ایجاد")
+    is_verified = models.BooleanField(default=False, verbose_name="تایید شده")
 
     def __str__(self):
-        return f"{self.phone_number} - {self.code} (created: {self.created_at})"
+        return f"{self.phone_number} - {self.code}"
 
     class Meta:
-        verbose_name = "کد تأیید پیامکی"
-        verbose_name_plural = "کدهای تأیید پیامکی"
-        #fgh
+        verbose_name = "کد تایید پیامکی"
+        verbose_name_plural = "کدهای تایید پیامکی"
 
 
 
@@ -77,13 +64,9 @@ class SMSVerificationCode(models.Model):
 
 
 class AdminEmail(models.Model):
-    subject = models.CharField(max_length=200, verbose_name="عنوان ایمیل")
-    body = RichTextField(verbose_name="متن ایمیل (HTML)")
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="تاریخ ایجاد")
-
-    class Meta:
-        verbose_name = "ایمیل ادمین"
-        verbose_name_plural = "ایمیل‌های ادمین"
+    subject = models.CharField(max_length=255)
+    body = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.subject
