@@ -168,23 +168,30 @@ import os
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
+
+    'formatters': {
+        'verbose': {
+            'format': '[{asctime}] {levelname} {name}: {message}',
+            'style': '{',
         },
     },
-    'root': {
-        'handlers': ['console'],
-        'level': 'DEBUG',  # اینجا روی DEBUG بذار که همه لاگ‌ها بیاد
+
+    'handlers': {
+        'file_secondary_password': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs', 'secondary_password.log'),  # مطمئن شو فولدر logs وجود داره
+            'formatter': 'verbose',
+        },
     },
+
     'loggers': {
-        # برای logger فایل limited_admin_site.py
-        'comments.limited_admin_site': {
-            'handlers': ['console'],
+        'second_pass': {
+            'handlers': ['file_secondary_password'],
             'level': 'DEBUG',
             'propagate': False,
         },
-        # برای logger فایل limited_admin_site.py (اسم ماژول میتونه متغیر باشه، براساس __name__)
-        # اگر در فایل limited_admin_site.py لاگر رو با __name__ ساختی، اینجا نامش همون باید باشه
-    },
+    }
 }
+
+
