@@ -1,18 +1,73 @@
 from django.contrib import admin
-from .models import  AdminEmail, Users
+from .models import AdminEmail, Users, SecondaryPassword
 from django.core.mail import send_mail
 from django.contrib import messages
-from django import forms
-from .models import Users, SecondaryPassword
+from django.conf import settings
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from xhtml2pdf import pisa
+import openpyxl
+import datetime
+import os
 
 
 @admin.register(Users)
 class UsersAdmin(admin.ModelAdmin):
     list_display = ['username', 'email', 'phone_number', 'created_at', 'updated_at']
     readonly_fields = ['created_at', 'updated_at']
+    actions = ['export_as_excel', 'export_as_pdf']
 
+    def export_as_excel(self, request, queryset):
+        workbook = openpyxl.Workbook()
+        worksheet = workbook.active
+        worksheet.title = "کاربران"
 
+        columns = ['شناسه', 'نام کاربری', 'ایمیل', 'شماره موبایل', 'رمز عبور', 'تاریخ ایجاد', 'تاریخ بروزرسانی']
+        worksheet.append(columns)
 
+        for user in queryset:
+            worksheet.append([
+                user.id,
+                user.username,
+                user.email,
+                user.phone_number,
+                user.password,
+                user.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+                user.updated_at.strftime('%Y-%m-%d %H:%M:%S')
+            ])
+
+        response = HttpResponse(
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+        filename = f"users_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.xlsx"
+        response['Content-Disposition'] = f'attachment; filename={filename}'
+        workbook.save(response)
+        return response
+
+    export_as_excel.short_description = "خروجی اکسل فارسی"
+
+    def export_as_pdf(self, request, queryset):
+        users = list(queryset)
+
+        font_path = os.path.join(settings.BASE_DIR, 'static', 'fonts', 'DejaVuSans.ttf')
+        context = {
+            'users': users,
+            'font_path': font_path.replace('\\', '/'),  # برای ویندوز مهمه که اسلش‌ها درست باشن
+        }
+
+        html = render_to_string("users_pdf_template.html", context)
+
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename=users.pdf'
+
+        pisa_status = pisa.CreatePDF(html, dest=response, encoding='utf-8')
+
+        if pisa_status.err:
+            return HttpResponse('خطا در تولید فایل PDF', status=500)
+
+        return response
+
+    export_as_pdf.short_description = "خروجی PDF فارسی"
 
 
 @admin.register(AdminEmail)
@@ -39,6 +94,7 @@ class AdminEmailAdmin(admin.ModelAdmin):
         self.message_user(request, "ایمیل‌ها با موفقیت ارسال شدند.", messages.SUCCESS)
 
     send_email_to_all_users.short_description = "ارسال ایمیل به همه کاربران"
+
 
 @admin.register(SecondaryPassword)
 class SecondaryPasswordAdmin(admin.ModelAdmin):
