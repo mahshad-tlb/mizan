@@ -17,7 +17,8 @@ urlpatterns = [
     path('home/', home_view, name='home'),  # 👈 اینو اضافه کن
     path("send-code/", send_code_view, name="send_code"),
     path("verify-code/", verify_code_view, name="verify_code"),
-    path('users/<slug:slug>/', user_detail, name='user_detail')
+    path('users/<slug:slug>/', user_detail, name='user_detail'),
+
 
 
 
