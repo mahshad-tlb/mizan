@@ -1,10 +1,6 @@
-
 from django.contrib import admin
-from users.models import Users
-from .models import UploadedFile
-
+from .models import  AdminEmail, Users
 from django.core.mail import send_mail
-
 from django.contrib import messages
 
 from .models import AdminEmail, Users
@@ -13,8 +9,8 @@ from .models import Users, SecondaryPassword
 
 @admin.register(Users)
 class UsersAdmin(admin.ModelAdmin):
-    list_display = ['username', 'email', 'phone_number', 'created_at', 'updated_at', 'created_at', 'updated_at']
-    readonly_fields = ['created_at', 'updated_at', 'created_at', 'updated_at']
+    list_display = ['username', 'email', 'phone_number', 'created_at', 'updated_at']
+    readonly_fields = ['created_at', 'updated_at']
 
 
 
