@@ -1,0 +1,3 @@
+import logging
+
+second_password_logger = logging.getLogger('second_pass')
