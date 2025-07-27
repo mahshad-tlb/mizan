@@ -87,3 +87,12 @@ class AdminEmail(models.Model):
 
     def __str__(self):
         return self.subject
+
+
+
+class SecondaryPassword(models.Model):
+    user = models.OneToOneField(Users, on_delete=models.CASCADE)
+    password = models.CharField(max_length=12,verbose_name="رمز دوم")  # رمزنگاری‌شده ذخیره میشه
+
+    def __str__(self):
+        return f"{self.user.username}'s secondary password"
