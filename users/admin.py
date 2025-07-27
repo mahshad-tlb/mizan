@@ -8,6 +8,7 @@ from django.core.mail import send_mail
 from django.contrib import messages
 
 from .models import AdminEmail, Users
+from .models import Users, SecondaryPassword
 
 
 @admin.register(Users)
@@ -48,3 +49,8 @@ class AdminEmailAdmin(admin.ModelAdmin):
         self.message_user(request, "ایمیل‌ها با موفقیت ارسال شدند.", messages.SUCCESS)
 
     send_email_to_all_users.short_description = "ارسال ایمیل به همه کاربران"
+
+@admin.register(SecondaryPassword)
+class SecondaryPasswordAdmin(admin.ModelAdmin):
+    list_display = ('user', 'password')
+    search_fields = ('user__username',)
