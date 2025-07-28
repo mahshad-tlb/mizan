@@ -8,7 +8,7 @@ class Comment(models.Model):
     is_approved = models.BooleanField(default=False, verbose_name="تایید شده؟")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="تاریخ ثبت")
     slug = models.SlugField(verbose_name="اسلاگ", blank=True, null=True, unique=True)
-
+    user = models.ForeignKey(Users, on_delete=models.CASCADE, related_name='comments')
 
     class Meta:
         verbose_name = "نظر"
