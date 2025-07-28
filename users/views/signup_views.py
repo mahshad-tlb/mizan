@@ -2,12 +2,11 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from users.models import Users, SecondaryPassword
 from users.forms.signup_forms import SignupForm, LoginForm
-import logging
 from django.contrib.auth.hashers import make_password, check_password
-
+import logging
 secondary_logger = logging.getLogger('secondary_password')
 
-
+logger = logging.getLogger(__name__)
 def signup_view(request):
     if request.method == "POST":
         form = SignupForm(request.POST)
