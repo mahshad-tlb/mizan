@@ -9,6 +9,27 @@ from xhtml2pdf import pisa
 import openpyxl
 import datetime
 import os
+from django.contrib.admin import SimpleListFilter
+from comments.models import Comment
+from comments.admin import CommentInline
+
+
+class HasCommentFilter(SimpleListFilter):
+    title = 'وضعیت نظر'
+    parameter_name = 'has_comment'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('yes', 'دارای نظر'),
+            ('no', 'بدون نظر'),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'yes':
+            return queryset.filter(id__in=Comment.objects.values_list('user_id', flat=True))
+        elif self.value() == 'no':
+            return queryset.exclude(id__in=Comment.objects.values_list('user_id', flat=True))
+        return queryset
 
 
 @admin.register(Users)
@@ -100,3 +121,6 @@ class AdminEmailAdmin(admin.ModelAdmin):
 class SecondaryPasswordAdmin(admin.ModelAdmin):
     list_display = ('user', 'password')
     search_fields = ('user__username',)
+
+
+
