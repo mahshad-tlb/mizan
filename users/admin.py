@@ -36,6 +36,10 @@ class HasCommentFilter(SimpleListFilter):
 class UsersAdmin(admin.ModelAdmin):
     list_display = ['username', 'email', 'phone_number', 'created_at', 'updated_at']
     readonly_fields = ['created_at', 'updated_at']
+    search_fields = ['username', 'email', 'phone_number']
+    list_filter = ['created_at', 'updated_at', HasCommentFilter]
+    list_editable = ['email', 'phone_number']
+    inlines = [CommentInline]
     actions = ['export_as_excel', 'export_as_pdf']
 
     def export_as_excel(self, request, queryset):
