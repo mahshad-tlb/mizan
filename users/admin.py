@@ -12,7 +12,7 @@ import os
 from django.contrib.admin import SimpleListFilter
 from comments.models import Comment
 from comments.admin import CommentInline
-
+from .models import Notification
 
 class HasCommentFilter(SimpleListFilter):
     title = 'وضعیت نظر'
@@ -128,3 +128,7 @@ class SecondaryPasswordAdmin(admin.ModelAdmin):
 
 
 
+@admin.register(Notification)
+class NotificationAdmin(admin.ModelAdmin):
+    list_display = ['recipient', 'message', 'is_read', 'created_at']
+    search_fields = ['recipient__username', 'message']

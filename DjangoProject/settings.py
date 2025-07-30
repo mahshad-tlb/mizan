@@ -1,13 +1,16 @@
-from pathlib import Path
 import os
+from pathlib import Path
+from dotenv import load_dotenv
 
-# 📁 Base directory
+# 📥 Load environment variables from .env
+load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
 # 🔐 Security
-SECRET_KEY = 'django-insecure-&8j7olto2(it_wh-5!+ry_)jok+d7)x!p)$x$@r&_be$sj5xic'
-DEBUG = True
-ALLOWED_HOSTS = []
+SECRET_KEY = os.environ.get('SECRET_KEY')
+DEBUG = os.environ.get('DEBUG', 'False').lower() in ['true', '1']
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
 
 # 📦 Installed apps
 INSTALLED_APPS = [
@@ -17,13 +20,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
 
-    # اپلیکیشن‌های پروژه
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+
     'users',
     'comments.apps.CommentsConfig',
     'uploads',
 
-    # سایر کتابخانه‌ها
     'storages',
     'ckeditor',
 ]
@@ -37,8 +44,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 
-    # ⚠️ ریت لیمیت بعد از احراز هویت اضافه شود
     'users.middleware.rate_limit_middleware.RedisRateLimitMiddleware',
 ]
 
@@ -53,6 +60,7 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
@@ -64,30 +72,34 @@ TEMPLATES = [
 WSGI_APPLICATION = 'DjangoProject.wsgi.application'
 
 # 🛢️ Database
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+ENVIRONMENT = os.environ.get('ENVIRONMENT', 'local')
+
+if ENVIRONMENT == 'production':
+    DATABASES = {
+        'default': {
+            'ENGINE': os.environ.get('DB_ENGINE'),
+            'NAME': os.environ.get('DB_NAME'),
+            'USER': os.environ.get('DB_USER'),
+            'PASSWORD': os.environ.get('DB_PASSWORD'),
+            'HOST': os.environ.get('DB_HOST'),
+            'PORT': os.environ.get('DB_PORT'),
+        }
     }
-}
+else:
+    # لوکال با SQLite
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / os.environ.get('SQLITE_DB_NAME', 'db.sqlite3'),
+        }
+    }
 
 # 🔐 Password validation
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-    {
-        'NAME': 'django_pwned_passwords.validators.PwnedPasswordsValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
 # 🌍 Internationalization
@@ -103,18 +115,70 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 # 🗝️ Default auto field
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# 📧 Email backend (for development)
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
 # ☁️ Arvan Storage settings
-ARVAN_ACCESS_KEY = '1cec986f-9ea5-4d56-ab11-ff7b041679d2'
-ARVAN_SECRET_KEY = '823fdc456a2720ff59071f5af61c3766227cebf2ca565d1b46bee71d98c8a1a4'
-ARVAN_BUCKET = 'mahshad'
-ARVAN_ENDPOINT = 'https://s3.ir-thr-at1.arvanstorage.ir'
+ARVAN_ACCESS_KEY = os.environ.get('ARVAN_ACCESS_KEY')
+ARVAN_SECRET_KEY = os.environ.get('ARVAN_SECRET_KEY')
+ARVAN_BUCKET = os.environ.get('ARVAN_BUCKET')
+ARVAN_ENDPOINT = os.environ.get('ARVAN_ENDPOINT')
 
-# 📜 Logging
+# 📨 Email settings
+EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
+EMAIL_HOST = os.environ.get('EMAIL_HOST')
+EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 587))
+EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'True').lower() in ['true', '1']
+EMAIL_USE_SSL = os.environ.get('EMAIL_USE_SSL', 'False').lower() in ['true', '1']
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL')
+
+# 🔐 Google OAuth
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ.get('CLIENT_ID')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ.get('CLIENT_SECRET')
+
+# ⚙️ Django AllAuth
+SITE_ID = 1
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_USERNAME_REQUIRED = False
+LOGIN_REDIRECT_URL = '/home'
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': ['profile', 'email'],
+        'AUTH_PARAMS': {'access_type': 'online'},
+    }
+}
+SOCIALACCOUNT_ADAPTER = 'users.adapters.CustomSocialAccountAdapter'
+
+# 📲 SMS.IR Settings
+SMS_IR_SECRET_KEY = os.environ.get('SMS_IR_SECRET_KEY')
+SMS_IR_TEMPLATE_ID = os.environ.get('SMS_IR_TEMPLATE_ID')
+SMS_IR_LINE_NUMBER = os.environ.get('SMS_IR_LINE_NUMBER')
+
+# 🧠 Redis cache (for rate limiting)
+REDIS_HOST = os.environ.get('REDIS_HOST', 'localhost')
+REDIS_PORT = int(os.environ.get('REDIS_PORT', 6379))
+REDIS_DB = int(os.environ.get('REDIS_DB', 0))
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": f"redis://{REDIS_HOST}:{REDIS_PORT}/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
+# 📝 Logging
 LOG_DIR = BASE_DIR / 'logs'
-LOG_DIR.mkdir(exist_ok=True)  # اطمینان از وجود پوشه
+LOG_DIR.mkdir(exist_ok=True)
 
 LOGGING = {
     'version': 1,
@@ -139,16 +203,5 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': False,
         },
-    }
-}
-
-# 🚦 Redis cache for rate limiting
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6380/1",  # مطمئن شو Redis اجرا شده
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-        }
     }
 }

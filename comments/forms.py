@@ -9,3 +9,12 @@ class CommentForm(forms.ModelForm):
         widgets = {
             'text': forms.Textarea(attrs={'placeholder': 'نظر خود را بنویسید...', 'rows': 3}),
         }
+
+
+
+from .models import Message
+
+class MessageForm(forms.ModelForm):
+    class Meta:
+        model = Message
+        fields = ['subject', 'content']

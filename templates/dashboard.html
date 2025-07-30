@@ -1,0 +1,36 @@
+<!-- user/templates/superuser/dashboard.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Superuser Dashboard</title>
+</head>
+<body>
+    <h1>Superuser Dashboard</h1>
+
+    <h2>Unread Notifications</h2>
+    <ul>
+        {% for notification in notifications %}
+            <li>
+                {{ notification.message }} –
+                <a href="{{ notification.link }}">View</a> –
+                {{ notification.created_at|date:"Y-m-d H:i" }}
+            </li>
+        {% empty %}
+            <li>No new notifications.</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Messages from Moderators</h2>
+    <ul>
+        {% for msg in messages %}
+            <li>
+                <strong>{{ msg.subject }}</strong> from {{ msg.sender }}<br>
+                {{ msg.content }}<br>
+                <small>{{ msg.created_at|date:"Y-m-d H:i" }}</small>
+            </li>
+        {% empty %}
+            <li>No messages received.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

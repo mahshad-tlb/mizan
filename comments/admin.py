@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import Comment
 from users.models import Users
+from .models import Message
 
 class CommentAdmin(admin.ModelAdmin):
     list_display = ['id', 'short_content', 'is_approved', 'created_at']
@@ -22,3 +23,10 @@ class CommentInline(admin.TabularInline):  # یا StackedInline
     readonly_fields = ['created_at', 'slug']
     fields = ['content', 'is_approved', 'created_at', 'slug']
     show_change_link = True
+
+@admin.register(Message)
+class MessageAdmin(admin.ModelAdmin):
+    list_display = ('sender', 'recipient', 'subject', 'is_read', 'created_at')
+    list_filter = ('is_read', 'created_at')
+    search_fields = ('subject', 'content', 'sender__username', 'recipient__username')
+    ordering = ('-created_at',)

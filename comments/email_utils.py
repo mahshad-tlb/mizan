@@ -37,4 +37,3 @@ def notify_admins(comment=None, subject=None, message=None):
         recipient_list=recipients,
         fail_silently=False
     )
-

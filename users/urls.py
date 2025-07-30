@@ -4,6 +4,7 @@ from .views.magic_link_views import send_magic_link
 from .views.password_views import send_reset_link, reset_password_confirm
 from .views.sms_views import send_code_view, verify_code_view
 from .views.user_views import user_detail, home_view
+from django.urls import path, include
 
 
 urlpatterns = [
@@ -19,6 +20,7 @@ urlpatterns = [
     path("verify-code/", verify_code_view, name="verify_code"),
     path('users/<slug:slug>/', user_detail, name='user_detail'),
 
+   path('accounts/', include('allauth.urls')),
 
 
 

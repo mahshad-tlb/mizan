@@ -1,3 +1,5 @@
+{% load socialaccount %}
+
 <!DOCTYPE html>
 <html lang="fa">
 <head>
@@ -23,6 +25,19 @@
             margin: 10px;
             display: inline-block;
         }
+        .google-login {
+            background-color: white;
+            color: #444;
+            border: 1px solid #ccc;
+            padding: 10px 20px;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        .google-login:hover {
+            background-color: #eee;
+        }
     </style>
 </head>
 <body>
@@ -32,6 +47,8 @@
             <a href="{% url 'home' %}">خانه</a>
             <a href="{% url 'login' %}">ورود</a>
             <a href="{% url 'signup' %}">ثبت‌نام</a>
+            <a href="{% provider_login_url 'google' %}" class="google-login">ورود با گوگل</a>
+
         </nav>
         <hr>
     </header>
