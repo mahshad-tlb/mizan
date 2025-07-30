@@ -3,9 +3,9 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 # 📥 Load environment variables from .env
-load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+load_dotenv()
 
 # 🔐 Security
 SECRET_KEY = os.environ.get('SECRET_KEY')
@@ -73,6 +73,7 @@ WSGI_APPLICATION = 'DjangoProject.wsgi.application'
 
 # 🛢️ Database
 ENVIRONMENT = os.environ.get('ENVIRONMENT', 'local')
+
 
 if ENVIRONMENT == 'production':
     DATABASES = {
