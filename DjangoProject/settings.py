@@ -9,7 +9,7 @@ load_dotenv(BASE_DIR / ".env")
 # 🔐 Security
 SECRET_KEY = os.environ.get('SECRET_KEY')
 DEBUG = os.environ.get('DEBUG', 'False').lower() in ['true', '1']
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
+ALLOWED_HOSTS = ['*']
 
 # 📦 Installed apps
 INSTALLED_APPS = [
