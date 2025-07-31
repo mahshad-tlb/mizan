@@ -1,15 +1,15 @@
-from django.contrib.auth.models import AbstractUser
 from django.utils.text import slugify
 from django.db import models
 from django.utils import timezone
 from django_jalali.db import models as jmodels
+from django.contrib.auth.models import PermissionsMixin, Group, Permission
 import logging
 
 
 logger = logging.getLogger('users')
 
 
-class Users( AbstractUser):
+class Users(models.Model, PermissionsMixin):
     username = models.CharField(max_length=14, unique=True, verbose_name="نام کاربری")
     email = models.EmailField(unique=True, verbose_name="ایمیل")
     phone_number = models.CharField(max_length=20, unique=True, verbose_name="شماره موبایل")
@@ -18,6 +18,21 @@ class Users( AbstractUser):
     created_at = jmodels.jDateTimeField(auto_now_add=True, verbose_name="تاریخ ایجاد")
     updated_at = jmodels.jDateTimeField(auto_now=True, verbose_name="تاریخ بروزرسانی")
     is_active = models.BooleanField(default=False, verbose_name="فعال")
+    is_staff = models.BooleanField(default=False, verbose_name="عضو کادر")
+    last_login = models.DateTimeField(null=True, blank=True, verbose_name="آخرین ورود")
+
+    groups = models.ManyToManyField(
+        Group,
+        blank=True,
+        related_name="custom_users",
+        verbose_name="گروه‌ها"
+    )
+    user_permissions = models.ManyToManyField(
+        Permission,
+        blank=True,
+        related_name="custom_users",
+        verbose_name="دسترسی‌ها"
+    )
 
     def save(self, *args, **kwargs):
         if not self.slug:
