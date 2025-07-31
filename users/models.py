@@ -16,6 +16,7 @@ class Users(models.Model):
     slug = models.SlugField(max_length=16, unique=True, blank=True, null=True, verbose_name="اسلاگ")
     created_at = jmodels.jDateTimeField(auto_now_add=True, verbose_name="تاریخ ایجاد")
     updated_at = jmodels.jDateTimeField(auto_now=True, verbose_name="تاریخ بروزرسانی")
+    is_active = models.BooleanField(default=False, verbose_name="فعال")
 
     def save(self, *args, **kwargs):
         if not self.slug:
