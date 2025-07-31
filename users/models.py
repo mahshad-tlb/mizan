@@ -2,12 +2,27 @@ from django.utils.text import slugify
 from django.db import models
 from django.utils import timezone
 from django_jalali.db import models as jmodels
-from django.contrib.auth.models import PermissionsMixin, Group, Permission
+from django.contrib.auth.models import PermissionsMixin, Group, Permission, BaseUserManager
 import logging
 
 
 logger = logging.getLogger('users')
 
+
+class UserManager(BaseUserManager):
+    def create_user(self, username, email, phone_number, password=None, **extra_fields):
+        if not email:
+            raise ValueError("ایمیل باید وارد شود")
+        email = self.normalize_email(email)
+        user = self.model(username=username, email=email, phone_number=phone_number, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, username, email, phone_number, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        return self.create_user(username, email, phone_number, password, **extra_fields)
 
 class Users(PermissionsMixin, models.Model):
     username = models.CharField(max_length=14, unique=True, verbose_name="نام کاربری")
@@ -38,6 +53,10 @@ class Users(PermissionsMixin, models.Model):
         if not self.slug:
             self.slug = slugify(self.username)
         super().save(*args, **kwargs)
+
+    @classmethod
+    def get_email_field_name(cls):
+        return 'email'
 
     def __str__(self):
         return self.username
