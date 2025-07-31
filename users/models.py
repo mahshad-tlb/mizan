@@ -9,7 +9,7 @@ import logging
 logger = logging.getLogger('users')
 
 
-class Users(models.Model, PermissionsMixin):
+class Users(PermissionsMixin, models.Model):
     username = models.CharField(max_length=14, unique=True, verbose_name="نام کاربری")
     email = models.EmailField(unique=True, verbose_name="ایمیل")
     phone_number = models.CharField(max_length=20, unique=True, verbose_name="شماره موبایل")
