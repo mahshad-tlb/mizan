@@ -2,6 +2,7 @@ from django.core.mail import send_mail
 from django.contrib.auth import get_user_model
 from django.utils.html import strip_tags
 import logging
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +34,7 @@ def notify_admins(comment=None, subject=None, message=None):
     send_mail(
         subject=subject or "اعلان جدید",
         message=strip_tags(message),
-        from_email="webmaster@example.com",
+        from_email=settings.DEFAULT_FROM_EMAIL,
         recipient_list=recipients,
         fail_silently=False
     )
