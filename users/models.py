@@ -69,7 +69,7 @@ class Users(PermissionsMixin, models.Model):
 class LoginToken(models.Model):
     user = models.ForeignKey(Users, on_delete=models.CASCADE, verbose_name="کاربر")
     token = models.CharField(max_length=50, unique=True, verbose_name="توکن")
-    created_at = jmodels.jDateTimeField(default=timezone.now, verbose_name="تاریخ ایجاد")
+    created_at = models.DateTimeField(default=timezone.now, verbose_name="تاریخ ایجاد")
     is_used = models.BooleanField(default=False, verbose_name="استفاده شده")
     updated_at = jmodels.jDateTimeField(auto_now=True, verbose_name="تاریخ بروزرسانی")
 
@@ -84,7 +84,7 @@ class LoginToken(models.Model):
 class SMSVerificationCode(models.Model):
     phone_number = models.CharField(max_length=20, unique=True, verbose_name="شماره موبایل")
     code = models.CharField(max_length=6, verbose_name="کد تایید")
-    created_at = jmodels.jDateTimeField(default=timezone.now, verbose_name="تاریخ ایجاد")
+    created_at = models.DateTimeField(default=timezone.now, verbose_name="تاریخ ایجاد")
     is_verified = models.BooleanField(default=False, verbose_name="تایید شده")
 
     def __str__(self):
