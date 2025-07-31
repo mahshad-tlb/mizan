@@ -5,8 +5,8 @@ from .views.password_views import send_reset_link, reset_password_confirm
 from .views.sms_views import send_code_view, verify_code_view
 from .views.user_views import user_detail, home_view
 from django.urls import path, include
-
-
+from users.views.activation_views import activate_account
+from users.views.magic_link_views import magic_login
 urlpatterns = [
     path('login/', login_view, name='login'),
     path('signup/', signup_view, name='signup'),
@@ -22,7 +22,9 @@ urlpatterns = [
 
    path('accounts/', include('allauth.urls')),
 
+    path("activate/<uidb64>/<token>/", activate_account, name="activate_account"),
 
+    path("magic-login/<str:token>/", magic_login, name="magic_login"),
 
 ]
 

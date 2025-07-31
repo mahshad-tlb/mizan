@@ -7,6 +7,12 @@ import logging
 secondary_logger = logging.getLogger('secondary_password')
 
 logger = logging.getLogger(__name__)
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.core.mail import send_mail
+from django.urls import reverse
+
 def signup_view(request):
     if request.method == "POST":
         form = SignupForm(request.POST)
@@ -15,14 +21,12 @@ def signup_view(request):
             password = form.cleaned_data['password']
             email = form.cleaned_data['email']
             phone_number = form.cleaned_data['phone_number']
-            secondary_password = form.cleaned_data['secondary_password']  # ✅ اصلاح شد
+            secondary_password = form.cleaned_data['secondary_password']
 
             cleaned_phone_number = f'+98{phone_number}'
 
-            # لاگ گرفتن از رمز دوم خام
-            secondary_logger.debug(f"🔐 رمز دوم وارد شده برای {username}: {secondary_password}")  # ✅ اصلاح شد
+            secondary_logger.debug(f"🔐 رمز دوم وارد شده برای {username}: {secondary_password}")
 
-            # چک کردن تکراری بودن
             if Users.objects.filter(email=email).exists():
                 messages.error(request, "این ایمیل قبلاً ثبت شده است.")
                 return render(request, "signup.html", {"form": form})
@@ -35,27 +39,42 @@ def signup_view(request):
                 messages.error(request, "این شماره موبایل قبلاً ثبت شده است.")
                 return render(request, "signup.html", {"form": form})
 
-            # ساخت کاربر
+            # ساخت کاربر (غیرفعال در ابتدا)
             hashed_password = make_password(password)
             user = Users.objects.create(
                 username=username,
                 password=hashed_password,
                 email=email,
-                phone_number=cleaned_phone_number
+                phone_number=cleaned_phone_number,
+                is_active=False  # 🔒 کاربر غیرفعال است تا تایید شود
             )
 
-            # هش کردن رمز دوم
-            hashed_secondary = make_password(secondary_password)
-            secondary_logger.debug(f"🔑 رمز دوم هش‌شده برای {username}: {hashed_secondary}")  # ✅ اصلاح شد
-
             # ذخیره رمز دوم
+            hashed_secondary = make_password(secondary_password)
             SecondaryPassword.objects.create(
                 user=user,
                 password=hashed_secondary
             )
+            secondary_logger.debug(f"🔑 رمز دوم هش‌شده برای {username}: {hashed_secondary}")
             secondary_logger.info(f"✅ رمز دوم برای کاربر {username} با موفقیت ذخیره شد.")
 
-            messages.success(request, "ثبت‌نام با موفقیت انجام شد.")
+            # ساخت توکن و لینک فعال‌سازی
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            token = default_token_generator.make_token(user)
+            activation_link = request.build_absolute_uri(
+                reverse("activate_account", kwargs={"uidb64": uid, "token": token})
+            )
+
+            # ارسال ایمیل
+            send_mail(
+                subject="فعالسازی حساب کاربری",
+                message=f"برای فعالسازی حساب کاربری‌تان روی لینک زیر کلیک کنید:\n{activation_link}",
+                from_email="mahshad@mtlb.erfann31dev.ir",  # ← این را مطابق ایمیل هاست خودت تغییر بده
+                recipient_list=[email],
+                fail_silently=False
+            )
+
+            messages.success(request, "ثبت‌نام انجام شد. لطفاً ایمیل خود را برای فعال‌سازی حساب بررسی کنید.")
             return redirect('login')
     else:
         form = SignupForm()

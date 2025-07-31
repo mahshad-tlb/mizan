@@ -4,6 +4,9 @@ from django.core.mail import send_mail
 from users.models import Users, LoginToken
 from users.forms.verification_forms import EmailForm
 import secrets
+from django.contrib.auth import login
+from django.utils import timezone
+from datetime import timedelta
 
 
 def send_magic_link(request):
@@ -26,7 +29,7 @@ def send_magic_link(request):
             send_mail(
                 subject="ورود سریع به سایت",
                 message=f"برای ورود روی این لینک کلیک کنید:\n{link}",
-                from_email="noreply@example.com",
+                from_email="mahshad@mtlb.erfann31dev.ir",
                 recipient_list=[email],
                 fail_silently=False
             )
@@ -36,3 +39,32 @@ def send_magic_link(request):
     else:
         form = EmailForm()
     return render(request, "send_magic_link.html", {"form": form})
+
+
+def magic_login(request, token):
+    try:
+        login_token = LoginToken.objects.get(token=token)
+    except LoginToken.DoesNotExist:
+        messages.error(request, "لینک ورود نامعتبر است.")
+        return render(request, "invalid_token.html")
+
+    if login_token.is_used:
+        messages.error(request, "این لینک قبلاً استفاده شده است.")
+        return render(request, "invalid_token.html")
+
+    # لینک فقط تا 10 دقیقه معتبر باشد
+    if timezone.now() - login_token.created_at > timedelta(minutes=10):
+        messages.error(request, "لینک منقضی شده است.")
+        return render(request, "invalid_token.html")
+
+    user = login_token.user
+
+    # لاگین دستی
+    request.session['user_id'] = user.id
+
+    # علامت‌گذاری لینک به عنوان استفاده‌شده
+    login_token.is_used = True
+    login_token.save()
+
+    messages.success(request, f"{user.username} عزیز، خوش آمدید.")
+    return redirect("home")
