@@ -207,3 +207,5 @@ LOGGING = {
         },
     }
 }
+
+PASSWORD_RESET_TIMEOUT =60 * 60 * 24
