@@ -14,6 +14,8 @@ from django.utils.encoding import force_bytes
 from django.core.mail import send_mail
 from django.urls import reverse
 
+
+
 def signup_view(request):
     if request.method == "POST":
         form = SignupForm(request.POST)
@@ -66,11 +68,11 @@ def signup_view(request):
                 reverse("activate_account", kwargs={"uidb64": uid, "token": token})
             )
 
-            # ارسال ایمیل
+            # ارسال ایمیل فعال‌سازی
             send_mail(
                 subject="فعالسازی حساب کاربری",
                 message=f"برای فعالسازی حساب کاربری‌تان روی لینک زیر کلیک کنید:\n{activation_link}",
-                from_email=settings.DEFAULT_FROM_EMAIL,  # ← این را مطابق ایمیل هاست خودت تغییر بده
+                from_email=settings.DEFAULT_FROM_EMAIL,
                 recipient_list=[email],
                 fail_silently=False
             )
@@ -81,8 +83,6 @@ def signup_view(request):
         form = SignupForm()
 
     return render(request, "signup.html", {"form": form})
-
-
 
 
 def login_view(request):
