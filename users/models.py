@@ -12,7 +12,7 @@ class Users(models.Model):
     username = models.CharField(max_length=14, unique=True, verbose_name="نام کاربری")
     email = models.EmailField(unique=True, verbose_name="ایمیل")
     phone_number = models.CharField(max_length=20, unique=True, verbose_name="شماره موبایل")
-    password = models.CharField(max_length=9, verbose_name="رمز عبور")
+    password = models.CharField(max_length=256, verbose_name="رمز عبور")
     slug = models.SlugField(max_length=16, unique=True, blank=True, null=True, verbose_name="اسلاگ")
     created_at = jmodels.jDateTimeField(auto_now_add=True, verbose_name="تاریخ ایجاد")
     updated_at = jmodels.jDateTimeField(auto_now=True, verbose_name="تاریخ بروزرسانی")
