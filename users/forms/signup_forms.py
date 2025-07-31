@@ -13,7 +13,7 @@ class SignupForm(forms.Form):
     password = forms.CharField(label="رمز عبور", widget=forms.PasswordInput)
     secondary_password = forms.CharField(label="رمز دوم", widget=forms.PasswordInput)
     email = forms.EmailField(label="ایمیل")
-    phone_number = forms.CharField(label="شماره همراه", max_length=15)
+    phone_number = forms.CharField(label="شماره همراه", max_length=20)
 
     def clean_secondary_password(self):
         password = self.cleaned_data.get("secondary_password")

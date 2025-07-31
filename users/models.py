@@ -11,7 +11,7 @@ logger = logging.getLogger('users')
 class Users(models.Model):
     username = models.CharField(max_length=14, unique=True, verbose_name="نام کاربری")
     email = models.EmailField(unique=True, verbose_name="ایمیل")
-    phone_number = models.CharField(max_length=12, unique=True, verbose_name="شماره موبایل")
+    phone_number = models.CharField(max_length=20, unique=True, verbose_name="شماره موبایل")
     password = models.CharField(max_length=9, verbose_name="رمز عبور")
     slug = models.SlugField(max_length=16, unique=True, blank=True, null=True, verbose_name="اسلاگ")
     created_at = jmodels.jDateTimeField(auto_now_add=True, verbose_name="تاریخ ایجاد")
@@ -46,7 +46,7 @@ class LoginToken(models.Model):
 
 
 class SMSVerificationCode(models.Model):
-    phone_number = models.CharField(max_length=11, unique=True, verbose_name="شماره موبایل")
+    phone_number = models.CharField(max_length=20, unique=True, verbose_name="شماره موبایل")
     code = models.CharField(max_length=6, verbose_name="کد تایید")
     created_at = jmodels.jDateTimeField(default=timezone.now, verbose_name="تاریخ ایجاد")
     is_verified = models.BooleanField(default=False, verbose_name="تایید شده")
