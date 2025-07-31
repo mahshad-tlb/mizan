@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8" />
+    <title>لینک نامعتبر</title>
+    <style>
+        body {
+            font-family: Tahoma, sans-serif;
+            direction: rtl;
+            padding: 40px;
+            background: #f8f8f8;
+            color: #444;
+            text-align: center;
+        }
+        .container {
+            background: white;
+            max-width: 400px;
+            margin: auto;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 12px #ccc;
+        }
+        a.button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+        a.button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>لینک نامعتبر یا منقضی شده است</h1>
+        <p>لینکی که استفاده کرده‌اید یا منقضی شده یا اشتباه است.</p>
+        <p>لطفاً دوباره درخواست لینک ورود یا فعال‌سازی بدهید.</p>
+        <a href="{% url 'send_magic_link' %}" class="button">درخواست لینک جدید</a>
+        <br />
+        <a href="{% url 'login' %}">بازگشت به صفحه ورود</a>
+    </div>
+</body>
+</html>
