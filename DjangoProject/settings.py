@@ -1,6 +1,9 @@
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+from zoneinfo import ZoneInfo
+TIME_ZONE = ZoneInfo("Asia/Tehran")
+
 
 # 📥 Load environment variables from .env
 BASE_DIR = Path(__file__).resolve().parent.parent
