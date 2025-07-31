@@ -1,3 +1,4 @@
+from django.contrib.auth.models import AbstractUser
 from django.utils.text import slugify
 from django.db import models
 from django.utils import timezone
@@ -8,7 +9,7 @@ import logging
 logger = logging.getLogger('users')
 
 
-class Users(models.Model):
+class Users( AbstractUser):
     username = models.CharField(max_length=14, unique=True, verbose_name="نام کاربری")
     email = models.EmailField(unique=True, verbose_name="ایمیل")
     phone_number = models.CharField(max_length=20, unique=True, verbose_name="شماره موبایل")

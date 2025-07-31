@@ -1,3 +1,4 @@
+from allauth.socialaccount.providers.mediawiki.provider import settings
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from users.models import Users, SecondaryPassword
@@ -5,7 +6,7 @@ from users.forms.signup_forms import SignupForm, LoginForm
 from django.contrib.auth.hashers import make_password, check_password
 import logging
 secondary_logger = logging.getLogger('secondary_password')
-
+from django.conf import settings
 logger = logging.getLogger(__name__)
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode
@@ -69,7 +70,7 @@ def signup_view(request):
             send_mail(
                 subject="فعالسازی حساب کاربری",
                 message=f"برای فعالسازی حساب کاربری‌تان روی لینک زیر کلیک کنید:\n{activation_link}",
-                from_email="mahshad@mtlb.erfann31dev.ir",  # ← این را مطابق ایمیل هاست خودت تغییر بده
+                from_email=settings.DEFAULT_FROM_EMAIL,  # ← این را مطابق ایمیل هاست خودت تغییر بده
                 recipient_list=[email],
                 fail_silently=False
             )
