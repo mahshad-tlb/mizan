@@ -14,6 +14,7 @@ from comments.models import Comment
 from comments.admin import CommentInline
 from .models import Notification
 
+
 class HasCommentFilter(SimpleListFilter):
     title = 'وضعیت نظر'
     parameter_name = 'has_comment'
@@ -34,11 +35,11 @@ class HasCommentFilter(SimpleListFilter):
 
 @admin.register(Users)
 class UsersAdmin(admin.ModelAdmin):
-    list_display = ['username', 'email', 'phone_number', 'created_at', 'updated_at']
+    list_display = ['username', 'email', 'phone_number', 'is_active']
     readonly_fields = ['created_at', 'updated_at']
     search_fields = ['username', 'email', 'phone_number']
     list_filter = ['created_at', 'updated_at', HasCommentFilter]
-    list_editable = ['email', 'phone_number']
+    list_editable = ['email', 'phone_number', 'is_active']
     inlines = [CommentInline]
     actions = ['export_as_excel', 'export_as_pdf']
 
@@ -125,7 +126,6 @@ class AdminEmailAdmin(admin.ModelAdmin):
 class SecondaryPasswordAdmin(admin.ModelAdmin):
     list_display = ('user', 'password')
     search_fields = ('user__username',)
-
 
 
 @admin.register(Notification)
