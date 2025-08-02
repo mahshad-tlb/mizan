@@ -12,9 +12,9 @@ def activate_account(request, uidb64, token):
         user = None
 
     if user and default_token_generator.check_token(user, token):
+        login(request, user)
         user.is_active = True
         user.save()
-        login(request, user)
         messages.success(request, "حساب شما با موفقیت فعال شد و وارد شدید.")
         return redirect("home")  # مسیر صفحه اصلی پروژه‌ات
     else:

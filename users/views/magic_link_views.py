@@ -60,7 +60,7 @@ def magic_login(request, token):
     user = login_token.user
 
     # لاگین دستی
-    request.session['user_id'] = user.id
+    login(request, user)
 
     # علامت‌گذاری لینک به عنوان استفاده‌شده
     login_token.is_used = True
