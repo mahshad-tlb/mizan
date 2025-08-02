@@ -52,7 +52,6 @@ def signup_view(request):
                 password=hashed_password,
                 email=email,
                 phone_number=cleaned_phone_number,
-                is_active=False  # 🔒 کاربر غیرفعال است تا تایید شود
             )
 
             # ذخیره رمز دوم
