@@ -11,7 +11,7 @@ class Section(models.Model):
         related_name="children",
         verbose_name="والد"
     )
-    order = models.PositiveIntegerField(default=0, verbose_name="ترتیب نمایش")
+    order = models.PositiveIntegerField(default=0, editable=False, db_index=True, verbose_name="ترتیب نمایش")
 
     def __str__(self):
         return self.title
