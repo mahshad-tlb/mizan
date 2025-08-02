@@ -1,0 +1,9 @@
+{% for section in sections %}
+    <h2>{{ section.title }}</h2>
+    {% for child in section.children.all %}
+        <h3>{{ child.title }}</h3>
+        {% for subchild in child.children.all %}
+            <h4>{{ subchild.title }}</h4>
+        {% endfor %}
+    {% endfor %}
+{% endfor %}
