@@ -8,7 +8,7 @@ class Comment(models.Model):
     is_approved = models.BooleanField(default=False, verbose_name="تایید شده؟")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="تاریخ ثبت")
     slug = models.SlugField(verbose_name="اسلاگ", blank=True, null=True, unique=True)
-    user = models.ForeignKey(Users, on_delete=models.CASCADE, related_name='comments')
+    user = models.ForeignKey(Users, on_delete=models.CASCADE, related_name='comments',null=True)
 
     class Meta:
         verbose_name = "نظر"
@@ -37,8 +37,8 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 class Message(models.Model):
-    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
-    recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages',null=True)
+    recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages',null=True)
     subject = models.CharField(max_length=255)
     content = models.TextField()
     is_read = models.BooleanField(default=False)
