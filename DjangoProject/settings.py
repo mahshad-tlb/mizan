@@ -48,6 +48,7 @@ MIDDLEWARE = [
     'allauth.account.middleware.AccountMiddleware',
 
     'users.middleware.rate_limit_middleware.RedisRateLimitMiddleware',
+    'sections'
 ]
 
 # 🔗 URL Configuration
