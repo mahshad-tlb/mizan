@@ -5,6 +5,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 
 from users.models import ActivationToken
+from django.contrib.auth import login, get_backends
 
 
 def activate_account(request, token):
@@ -16,13 +17,16 @@ def activate_account(request, token):
 
     if activation_token.is_valid():
         user = activation_token.user
-        user.is_active = True  # ✅ اینجا باید True باشه
+        user.is_active = True
         user.save()
 
         activation_token.is_used = True
         activation_token.save()
 
-        login(request, user)
+        # تعیین backend به صورت دستی
+        backend = get_backends()[0]  # اولین backend از لیست
+        login(request, user, backend=backend.__module__ + '.' + backend.__class__.__name__)
+
         messages.success(request, "حساب شما با موفقیت فعال شد.")
         return redirect("home")
     else:
