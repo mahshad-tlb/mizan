@@ -7,11 +7,12 @@ from .views.user_views import user_detail, home_view
 from django.urls import path, include
 from users.views.activation_views import activate_account
 from users.views.magic_link_views import magic_login
+
 urlpatterns = [
     path('login/', login_view, name='login'),
     path('signup/', signup_view, name='signup'),
     path("magic-link/", send_magic_link, name="send_magic_link"),
-   # path("magic-login/<str:token>/", views.magic_login, name="magic_login"),
+    # path("magic-login/<str:token>/", views.magic_login, name="magic_login"),
 
     path("send-reset-link/", send_reset_link, name="send_reset_link"),
     path("reset-pass/<str:token>/", reset_password_confirm, name="reset_password_confirm"),
@@ -20,11 +21,10 @@ urlpatterns = [
     path("verify-code/", verify_code_view, name="verify_code"),
     path('users/<slug:slug>/', user_detail, name='user_detail'),
 
-   path('accounts/', include('allauth.urls')),
-
-    path("activate/<uidb64>/<token>/", activate_account, name="activate_account"),
+    path('accounts/', include('allauth.urls')),
+    # urls.py
+    path("activate/<token>/", activate_account, name="activate_account"),
 
     path("magic-login/<str:token>/", magic_login, name="magic_login"),
 
 ]
-
