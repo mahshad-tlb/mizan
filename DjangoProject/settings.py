@@ -34,6 +34,8 @@ INSTALLED_APPS = [
 
     'storages',
     'ckeditor',
+    'sections',
+    'adminsortable2'
 ]
 
 # 🧠 Middleware
@@ -48,7 +50,7 @@ MIDDLEWARE = [
     'allauth.account.middleware.AccountMiddleware',
 
     'users.middleware.rate_limit_middleware.RedisRateLimitMiddleware',
-    'sections'
+
 ]
 
 # 🔗 URL Configuration
