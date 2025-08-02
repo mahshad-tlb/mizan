@@ -16,7 +16,7 @@ def activate_account(request, token):
 
     if activation_token.is_valid():
         user = activation_token.user
-        user.is_active = False
+        user.is_active = True  # ✅ اینجا باید True باشه
         user.save()
 
         activation_token.is_used = True
