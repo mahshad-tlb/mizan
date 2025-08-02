@@ -71,9 +71,11 @@ class Users(PermissionsMixin, models.Model):
 class ActivationToken(models.Model):
     user = models.ForeignKey(Users, on_delete=models.CASCADE, related_name="activation_tokens")
     token = models.CharField(max_length=64, unique=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
 
     def is_valid(self):
+        if self.created_at is None:
+            return False
         expiration_time = self.created_at + timedelta(days=1)
         return timezone.now() <= expiration_time
 
