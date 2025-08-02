@@ -69,7 +69,7 @@ class Users(PermissionsMixin, models.Model):
 class LoginToken(models.Model):
     user = models.ForeignKey(Users, on_delete=models.CASCADE, verbose_name="کاربر")
     token = models.CharField(max_length=50, unique=True, verbose_name="توکن")
-    created_at = models.DateTimeField(default=timezone.now, verbose_name="تاریخ ایجاد")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="تاریخ ایجاد")
     is_used = models.BooleanField(default=False, verbose_name="استفاده شده")
     updated_at = jmodels.jDateTimeField(auto_now=True, verbose_name="تاریخ بروزرسانی")
 
