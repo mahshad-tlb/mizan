@@ -5,6 +5,7 @@ from django_jalali.db import models as jmodels
 from django.contrib.auth.models import PermissionsMixin, Group, Permission, BaseUserManager
 import logging
 
+from jdatetime import timedelta
 
 logger = logging.getLogger('users')
 
@@ -23,6 +24,7 @@ class UserManager(BaseUserManager):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
         return self.create_user(username, email, phone_number, password, **extra_fields)
+
 
 class Users(PermissionsMixin, models.Model):
     username = models.CharField(max_length=14, unique=True, verbose_name="نام کاربری")
@@ -66,6 +68,17 @@ class Users(PermissionsMixin, models.Model):
         verbose_name_plural = "کاربران"
 
 
+class ActivationToken(models.Model):
+    user = models.ForeignKey(Users, on_delete=models.CASCADE, related_name="activation_tokens")
+    token = models.CharField(max_length=64, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_used = models.BooleanField(default=False)
+
+    def is_valid(self):
+        expiration_time = self.created_at + timedelta(minutes=5)  # expires in 24 hours
+        return not self.is_used and timezone.now() < expiration_time
+
+
 class LoginToken(models.Model):
     user = models.ForeignKey(Users, on_delete=models.CASCADE, verbose_name="کاربر")
     token = models.CharField(max_length=50, unique=True, verbose_name="توکن")
@@ -95,10 +108,6 @@ class SMSVerificationCode(models.Model):
         verbose_name_plural = "کدهای تایید پیامکی"
 
 
-
-
-
-
 class AdminEmail(models.Model):
     subject = models.CharField(max_length=255)
     body = models.TextField()
@@ -108,10 +117,9 @@ class AdminEmail(models.Model):
         return self.subject
 
 
-
 class SecondaryPassword(models.Model):
     user = models.OneToOneField(Users, on_delete=models.CASCADE)
-    password = models.CharField(max_length=256,verbose_name="رمز دوم")  # رمزنگاری‌شده ذخیره میشه
+    password = models.CharField(max_length=256, verbose_name="رمز دوم")  # رمزنگاری‌شده ذخیره میشه
 
     def __str__(self):
         return f"{self.user.username}'s secondary password"

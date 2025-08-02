@@ -1,19 +1,22 @@
+import secrets
+
 from allauth.socialaccount.providers.mediawiki.provider import settings
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from users.models import Users, SecondaryPassword
+from users.models import Users, SecondaryPassword, ActivationToken
 from users.forms.signup_forms import SignupForm, LoginForm
 from django.contrib.auth.hashers import make_password, check_password
 import logging
+
 secondary_logger = logging.getLogger('secondary_password')
 from django.conf import settings
+
 logger = logging.getLogger(__name__)
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.core.mail import send_mail
 from django.urls import reverse
-
 
 
 def signup_view(request):
@@ -62,10 +65,12 @@ def signup_view(request):
             secondary_logger.info(f"✅ رمز دوم برای کاربر {username} با موفقیت ذخیره شد.")
 
             # ساخت توکن و لینک فعال‌سازی
-            uid = urlsafe_base64_encode(force_bytes(user.pk))
-            token = default_token_generator.make_token(user)
+            token = secrets.token_urlsafe(32)
+            ActivationToken.objects.create(user=user, token=token)
+
+            # build link
             activation_link = request.build_absolute_uri(
-                reverse("activate_account", kwargs={"uidb64": uid, "token": token})
+                reverse("activate_account", kwargs={"token": token})
             )
 
             # ارسال ایمیل فعال‌سازی
