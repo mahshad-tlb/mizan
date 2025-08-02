@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import AdminEmail, Users, SecondaryPassword
+from .models import AdminEmail, Users, SecondaryPassword, ActivationToken
 from django.core.mail import send_mail
 from django.contrib import messages
 from django.conf import settings
@@ -132,3 +132,6 @@ class SecondaryPasswordAdmin(admin.ModelAdmin):
 class NotificationAdmin(admin.ModelAdmin):
     list_display = ['recipient', 'message', 'is_read', 'created_at']
     search_fields = ['recipient__username', 'message']
+
+
+admin.site.register(ActivationToken)
