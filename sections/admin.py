@@ -8,5 +8,3 @@ class SectionAdmin(SortableAdminMixin, admin.ModelAdmin):
     form = SectionAdminForm
     list_display = ['title', 'parent', 'order']
     list_filter = ['parent']
-
-
