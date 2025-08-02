@@ -16,7 +16,7 @@ def activate_account(request, token):
         user.is_active = True
         user.save()
 
-        activation_token.is_used = True
+        activation_token.created_at = None
         activation_token.save()
 
         return redirect("home")

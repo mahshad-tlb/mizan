@@ -72,11 +72,8 @@ class ActivationToken(models.Model):
     user = models.ForeignKey(Users, on_delete=models.CASCADE, related_name="activation_tokens")
     token = models.CharField(max_length=64, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    is_used = models.BooleanField(default=False)  # ⚠️ این باید default=False باشد
 
     def is_valid(self):
-        if self.is_used:
-            return False
         expiration_time = self.created_at + timedelta(days=1)
         return timezone.now() <= expiration_time
 
