@@ -41,6 +41,7 @@ def send_magic_link(request):
     return render(request, "send_magic_link.html", {"form": form})
 
 
+
 def magic_login(request, token):
     try:
         login_token = LoginToken.objects.get(token=token)
@@ -52,17 +53,8 @@ def magic_login(request, token):
         messages.error(request, "این لینک قبلاً استفاده شده است.")
         return render(request, "invalid_token.html")
 
-    # 🧪 Debug prints to check time difference
-    now = timezone.now()
-    token_time = login_token.created_at
-    time_diff = now - token_time
-
-    print("🕒 Now:", now)
-    print("📨 Token created at:", token_time)
-    print("⏱️ Time difference:", time_diff)
-
     # لینک فقط تا 10 دقیقه معتبر باشد
-    if time_diff > timedelta(minutes=10):
+    if timezone.now() - login_token.created_at > timedelta(minutes=10):
         messages.error(request, "لینک منقضی شده است.")
         return render(request, "invalid_token.html")
 
@@ -77,4 +69,3 @@ def magic_login(request, token):
 
     messages.success(request, f"{user.username} عزیز، خوش آمدید.")
     return redirect("home")
-
