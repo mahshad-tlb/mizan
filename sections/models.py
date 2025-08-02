@@ -33,4 +33,5 @@ class Section(models.Model):
     class Meta:
         verbose_name = "سکشن"
         verbose_name_plural = "سکشن‌ها"
+        ordering = ['order']
 
