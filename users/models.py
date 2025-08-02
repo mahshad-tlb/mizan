@@ -69,15 +69,16 @@ class Users(PermissionsMixin, models.Model):
 
 
 class ActivationToken(models.Model):
-    user = models.ForeignKey(Users, on_delete=models.CASCADE, related_name="activation_tokens")
+    user = models.ForeignKey(Users, on_delete=models.CASCADE)
     token = models.CharField(max_length=64, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    is_used = models.BooleanField(default=False)
+    is_used = models.BooleanField(default=False)  # ⚠️ این باید default=False باشد
 
     def is_valid(self):
-        expiration_time = self.created_at + timedelta(minutes=5)  # expires in 24 hours
-        return not self.is_used and timezone.now() < expiration_time
-
+        if self.is_used:
+            return False
+        expiration_time = self.created_at + timedelta(days=1)
+        return timezone.now() <= expiration_time
 
 class LoginToken(models.Model):
     user = models.ForeignKey(Users, on_delete=models.CASCADE, verbose_name="کاربر")

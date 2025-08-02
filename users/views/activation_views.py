@@ -1,11 +1,7 @@
-from django.utils.http import urlsafe_base64_decode
-from django.contrib.auth.tokens import default_token_generator
-from django.contrib.auth import get_user_model, login
 from django.shortcuts import render, redirect
 from django.contrib import messages
 
 from users.models import ActivationToken
-from django.contrib.auth import login, get_backends
 
 
 def activate_account(request, token):
@@ -23,12 +19,6 @@ def activate_account(request, token):
         activation_token.is_used = True
         activation_token.save()
 
-        # تعیین backend به صورت دستی
-        backend = get_backends()[0]  # اولین backend از لیست
-        login(request, user, backend=backend.__module__ + '.' + backend.__class__.__name__)
-
-        messages.success(request, "حساب شما با موفقیت فعال شد.")
         return redirect("home")
     else:
-        messages.error(request, "لینک منقضی شده یا قبلاً استفاده شده است.")
         return render(request, "invalid_token.html")

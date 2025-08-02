@@ -65,7 +65,7 @@ def signup_view(request):
 
             # ساخت توکن و لینک فعال‌سازی
             token = secrets.token_urlsafe(32)
-            ActivationToken.objects.create(user=user, token=token)
+            ActivationToken.objects.create(user=user, token=token, is_used=False)
 
             # build link
             activation_link = request.build_absolute_uri(
