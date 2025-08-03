@@ -30,13 +30,12 @@ INSTALLED_APPS = [
     'users',
     'comments.apps.CommentsConfig',
     'uploads',
-    'google',
 
     'storages',
     'ckeditor',
     'sections',
     'adminsortable2',
-
+     'google',
 ]
 
 # 🧠 Middleware
