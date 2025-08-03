@@ -15,7 +15,7 @@ DEBUG = os.environ.get('DEBUG', 'False').lower() in ['true', '1']
 ALLOWED_HOSTS = ['*']
 # 📦 Installed apps
 INSTALLED_APPS = [
-    'django.contrib.admin',
+'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'ckeditor',
     'sections',
     'adminsortable2'
+
 ]
 
 # 🧠 Middleware
