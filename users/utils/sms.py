@@ -15,7 +15,7 @@ def send_verification_code(phone_number, code):
         "templateId": 231572,
         "parameters": [
             {
-                "name": "Code",
+                "name": "CODE",
                 "value": code
             }
         ]
