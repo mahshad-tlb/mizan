@@ -104,6 +104,10 @@ class SMSVerificationCode(models.Model):
     def __str__(self):
         return f"{self.phone_number} - {self.code}"
 
+    def is_expired(self):
+        expiration_time = self.created_at + timedelta(minutes=5)  # اعتبار کد ۵ دقیقه
+        return timezone.now() > expiration_time
+
     class Meta:
         verbose_name = "کد تایید پیامکی"
         verbose_name_plural = "کدهای تایید پیامکی"
