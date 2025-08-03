@@ -35,7 +35,7 @@ INSTALLED_APPS = [
     'storages',
     'ckeditor',
     'sections',
-    'adminsortable2'
+    'adminsortable2',
 
 ]
 
