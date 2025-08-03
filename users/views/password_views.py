@@ -28,7 +28,7 @@ def send_reset_link(request):
             send_mail(
                 subject="بازیابی رمز عبور",
                 message=f"برای تغییر رمز عبور روی این لینک کلیک کنید:\n{link}",
-                from_email="noreply@example.com",
+                from_email="mahshad@mtlb.erfann31dev.ir",
                 recipient_list=[email],
                 fail_silently=False
             )
