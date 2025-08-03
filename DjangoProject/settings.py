@@ -138,7 +138,7 @@ DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL')
 # 🔐 Google OAuth
 GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')
 GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET')
-GOOGLE_REDIRECT_URI = "https://mtlb.erfann31dev.ir/auth/google/callback/"
+GOOGLE_REDIRECT_URI = "https://mtlb.erfann31dev.ir/accounts/google/login/callback/"
 
 
 # ⚙️ Django AllAuth
