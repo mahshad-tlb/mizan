@@ -19,7 +19,7 @@ def send_verification_code(phone_number, code):
     }
 
     response = requests.post(url, json=json_data, headers=headers)
-    print("🔔 SMS API response:", response.status_code, response.text)
+    print(" SMS API response:", response.status_code, response.text)
 
     if response.status_code != 200:
         raise Exception(f"Failed to send SMS: {response.text}")
