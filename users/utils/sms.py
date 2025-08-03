@@ -1,7 +1,10 @@
 import requests
+import logging
+
+logger = logging.getLogger(__name__)
 
 def send_verification_code(phone_number, code):
-    url = "https://api.sms.ir/v1/send/verify"  # تغییر URL
+    url = "https://api.sms.ir/v1/send/verify"
     headers = {
         "Content-Type": "application/json",
         "Accept": "application/json",
@@ -9,17 +12,23 @@ def send_verification_code(phone_number, code):
     }
     json_data = {
         "mobile": phone_number,
-        "templateId": 231572,  # شناسه قالب (Template ID) که در پنل تعریف کردی
+        "templateId": 231572,
         "parameters": [
             {
-                "name": "Code",  # اسم متغیر داخل قالب
+                "name": "Code",
                 "value": code
             }
         ]
     }
 
     response = requests.post(url, json=json_data, headers=headers)
-    print("SMS API response:", response.status_code, response.text.encode("utf-8", errors="ignore").decode("utf-8"))
+
+    try:
+        # تلاش برای لاگ کردن بدون یونیکدهای مشکل‌ساز
+        safe_text = response.text.encode('ascii', errors='ignore').decode('ascii')
+        logger.info(f"SMS API response: {response.status_code}, body: {safe_text}")
+    except Exception as e:
+        logger.warning(f"Could not log SMS response text due to encoding: {e}")
 
     if response.status_code != 200:
-        raise Exception(f"Failed to send SMS: {response.text}")
+        raise Exception(f"Failed to send SMS: {response.status_code}")
