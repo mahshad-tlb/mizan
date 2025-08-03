@@ -47,7 +47,8 @@
             <a href="{% url 'home' %}">خانه</a>
             <a href="{% url 'login' %}">ورود</a>
             <a href="{% url 'signup' %}">ثبت‌نام</a>
-            <a href="{% provider_login_url 'google' %}" class="google-login">ورود با گوگل</a>
+            <a href="{% url 'google-login-init' %}" class="google-login">ورود با گوگل</a>
+
 
         </nav>
         <hr>
