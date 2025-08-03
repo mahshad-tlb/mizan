@@ -30,7 +30,7 @@ INSTALLED_APPS = [
     'users',
     'comments.apps.CommentsConfig',
     'uploads',
-    'google'
+    'google',
 
     'storages',
     'ckeditor',
