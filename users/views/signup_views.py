@@ -1,6 +1,6 @@
 import secrets
 
-from allauth.socialaccount.providers.mediawiki.provider import settings
+
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from users.models import Users, SecondaryPassword, ActivationToken
