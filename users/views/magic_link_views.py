@@ -35,7 +35,7 @@ def send_magic_link(request):
             )
 
             messages.success(request, "لینک ورود به ایمیل شما ارسال شد.")
-            return redirect("login")
+            return redirect("home")
     else:
         form = EmailForm()
     return render(request, "send_magic_link.html", {"form": form})

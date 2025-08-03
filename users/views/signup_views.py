@@ -82,7 +82,7 @@ def signup_view(request):
             )
 
             messages.success(request, "ثبت‌نام انجام شد. لطفاً ایمیل خود را برای فعال‌سازی حساب بررسی کنید.")
-            return redirect('login')
+            return redirect('home')
     else:
         form = SignupForm()
 
