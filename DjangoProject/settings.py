@@ -67,6 +67,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+
             ],
         },
     },
@@ -145,8 +146,13 @@ GOOGLE_REDIRECT_URI = "https://mtlb.erfann31dev.ir/accounts/google/login/callbac
 SITE_ID = 5
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
+    )
 
-)
+try:
+    from .settings_local import *
+except ImportError:
+    pass
+
 
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'

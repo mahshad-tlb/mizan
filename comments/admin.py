@@ -1,7 +1,9 @@
+# comments/admin.py
+
 from django.contrib import admin
-from .models import Comment
+from .models import Comment, Message
 from users.models import Users
-from .models import Message
+# سایر ایمپورت‌ها...
 
 class CommentAdmin(admin.ModelAdmin):
     list_display = ['id', 'short_content', 'is_approved', 'created_at']
@@ -14,19 +16,15 @@ class CommentAdmin(admin.ModelAdmin):
         return obj.content[:50]
     short_content.short_description = "متن نظر"
 
+admin.site.register(Comment, CommentAdmin) # ثبت مدل Comment در پنل اصلی
 
 
-
-class CommentInline(admin.TabularInline):  # یا StackedInline
+class CommentInline(admin.TabularInline):
     model = Comment
     extra = 0
     readonly_fields = ['created_at', 'slug']
     fields = ['content', 'is_approved', 'created_at', 'slug']
     show_change_link = True
 
-@admin.register(Message)
-class MessageAdmin(admin.ModelAdmin):
-    list_display = ('sender', 'recipient', 'subject', 'is_read', 'created_at')
-    list_filter = ('is_read', 'created_at')
-    search_fields = ('subject', 'content', 'sender__username', 'recipient__username')
-    ordering = ('-created_at',)
+# این فایل نباید مدل Message را ثبت کند.
+# بنابراین مطمئن شوید که هیچ خطی مانند admin.site.register(Message, ...) در اینجا وجود ندارد.

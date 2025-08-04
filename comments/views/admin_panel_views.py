@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import get_object_or_404, render, redirect
 from comments.models import Comment
-from comments.forms.CommentForms import CommentForm
+from comments.forms import CommentForm
 
 
 def is_limited_admin(user):
