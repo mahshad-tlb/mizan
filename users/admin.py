@@ -163,9 +163,9 @@ from comments.models import Message
 def custom_admin_index(request, extra_context=None):
     print("🚨 custom_admin_index called")
     if request.user.is_superuser:
-        print(f"✅ Current user: {request.user}")
+        print(f" Current user: {request.user}")
         messages_qs = Message.objects.filter(recipient=request.user, is_read=False)
-        print(f"📬 Unread messages count: {messages_qs.count()}")
+        print(f" Unread messages count: {messages_qs.count()}")
         extra_context = extra_context or {}
         extra_context['unread_messages_count'] = messages_qs.count()
     return admin.site.original_index(request, extra_context)
