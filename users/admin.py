@@ -124,27 +124,53 @@ class SecondaryPasswordAdmin(admin.ModelAdmin):
 
 
 class SuperuserMessageAdmin(admin.ModelAdmin):
-    list_display = ('sender', 'recipient', 'subject', 'is_read', 'created_at')
-    list_filter = ('is_read', 'created_at')
-    search_fields = ('subject', 'content', 'sender__username', 'recipient__username')
-    ordering = ('-created_at',)
+    list_display = ['sender', 'subject', 'is_read', 'created_at']
+    readonly_fields = ['sender', 'recipient', 'subject', 'content', 'created_at']
 
-    def has_permission(self, request):
+    def has_module_permission(self, request):
         return request.user.is_superuser
 
-    def get_form(self, request, obj=None, **kwargs):
-        form = super().get_form(request, obj, **kwargs)
-        form.base_fields['sender'].initial = request.user
-        form.base_fields['sender'].widget.attrs['disabled'] = True
-        limited_admins = User.objects.filter(groups__name='Limited Admin')
-        form.base_fields['recipient'].queryset = limited_admins
-        return form
+    def has_view_permission(self, request, obj=None):
+        return request.user.is_superuser
 
-    def get_queryset(self, request):
-        qs = super().get_queryset(request)
-        if request.user.is_superuser:
-            return qs.filter(recipient=request.user) | qs.filter(sender=request.user)
-        return qs.none()
+    def has_change_permission(self, request, obj=None):
+        return request.user.is_superuser
 
+    def has_delete_permission(self, request, obj=None):
+        return request.user.is_superuser
+
+    def change_view(self, request, object_id, form_url='', extra_context=None):
+        message = self.get_object(request, object_id)
+        if message and not message.is_read:
+            message.is_read = True
+            message.save()
+        return super().change_view(request, object_id, form_url, extra_context)
+
+# اگر قبلاً ثبت شده، پاک کن تا دوباره ثبتش کنیم
+    try:
+        admin.site.unregister(Message)
+    except admin.sites.NotRegistered:
+        pass
 
 admin.site.register(Message, SuperuserMessageAdmin)
+
+
+from django.contrib import admin
+from django.template.response import TemplateResponse
+from comments.models import Message
+
+# بازنویسی نمای index ادمین
+def custom_admin_index(request, extra_context=None):
+    print("🚨 custom_admin_index called")
+    if request.user.is_superuser:
+        print(f"✅ Current user: {request.user}")
+        messages_qs = Message.objects.filter(recipient=request.user, is_read=False)
+        print(f"📬 Unread messages count: {messages_qs.count()}")
+        extra_context = extra_context or {}
+        extra_context['unread_messages_count'] = messages_qs.count()
+    return admin.site.original_index(request, extra_context)
+
+# ذخیره نسخه اصلی
+admin.site.original_index = admin.site.index
+# جایگزینی با نسخه سفارشی
+admin.site.index = custom_admin_index
