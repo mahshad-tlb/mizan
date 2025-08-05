@@ -14,7 +14,7 @@ def send_email(request):
 
             subject = email.عنوان
             message = email.متن
-            from_email = 'test@example.com'
+            from_email = 'https://mtlb.erfann31dev.ir/'
 
             # دریافت ایمیل همه کاربران فعال
             users = Users.objects.filter(is_active=True).exclude(email='').values_list('email', flat=True)

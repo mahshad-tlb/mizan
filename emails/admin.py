@@ -9,7 +9,7 @@ def send_email_to_all(modeladmin, request, queryset):
     for email in queryset:
         subject = email.عنوان
         message = email.متن
-        from_email = 'test@example.com'
+        from_email = 'https://mtlb.erfann31dev.ir/'
         users = Users.objects.exclude(email='').values_list('email', flat=True)
         recipient_list = list(users)
         send_mail(subject, message, from_email, recipient_list, fail_silently=False)
