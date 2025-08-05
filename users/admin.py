@@ -161,7 +161,7 @@ from comments.models import Message
 
 # بازنویسی نمای index ادمین
 def custom_admin_index(request, extra_context=None):
-    print("🚨 custom_admin_index called")
+    print(" custom_admin_index called")
     if request.user.is_superuser:
         print(f" Current user: {request.user}")
         messages_qs = Message.objects.filter(recipient=request.user, is_read=False)
