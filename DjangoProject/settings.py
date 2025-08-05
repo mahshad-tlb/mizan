@@ -35,7 +35,9 @@ INSTALLED_APPS = [
     'ckeditor',
     'sections',
     'adminsortable2',
-     'google',
+    'google',
+    'emails',
+
 ]
 
 # 🧠 Middleware
