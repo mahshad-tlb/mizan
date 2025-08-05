@@ -14,10 +14,19 @@ class Email(models.Model):
     updated_at = jmodels.jDateTimeField("تاریخ بروزرسانی", auto_now=True)
 
     def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.title)
         is_new = self.pk is None
+
+        if not self.slug:
+            base_slug = slugify(self.title or "")
+            slug = base_slug
+            counter = 1
+            while Email.objects.filter(slug=slug).exists():
+                slug = f"{base_slug}-{counter}"
+                counter += 1
+            self.slug = slug
+
         super().save(*args, **kwargs)
+
         if is_new:
             logger.info(f"ایمیل جدید با عنوان '{self.title}' ایجاد شد.")
         else:
