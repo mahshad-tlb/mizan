@@ -7,23 +7,25 @@ import logging
 logger = logging.getLogger(__name__)
 
 class Email(models.Model):
-    عنوان = models.CharField("عنوان", max_length=100)
-    متن = RichTextField("متن")
-    اسلاگ = models.SlugField("اسلاگ", unique=True, blank=True)
-    تاریخ_ایجاد = jmodels.jDateTimeField("تاریخ ایجاد", auto_now_add=True)
-    تاریخ_بروزرسانی = jmodels.jDateTimeField("تاریخ بروزرسانی", auto_now=True)
+    title = models.CharField("عنوان", max_length=100)
+    body = RichTextField("متن")
+    slug = models.SlugField("اسلاگ", unique=True, blank=True)
+    created_at = jmodels.jDateTimeField("تاریخ ایجاد", auto_now_add=True)
+    updated_at = jmodels.jDateTimeField("تاریخ بروزرسانی", auto_now=True)
 
     def save(self, *args, **kwargs):
-        if not self.اسلاگ:
-            self.اسلاگ = slugify(self.عنوان)
-        is_new = False
-        if self.pk is None:
-                is_new = True
+        if not self.slug:
+            self.slug = slugify(self.title)
+        is_new = self.pk is None
         super().save(*args, **kwargs)
         if is_new:
-            logger.info(f"ایمیل جدید با عنوان '{self.عنوان}' ایجاد شد.")
+            logger.info(f"ایمیل جدید با عنوان '{self.title}' ایجاد شد.")
         else:
-            logger.info(f"ایمیل با عنوان '{self.عنوان}' به‌روزرسانی شد.")
+            logger.info(f"ایمیل با عنوان '{self.title}' به‌روزرسانی شد.")
 
     def __str__(self):
-        return self.عنوان
+        return self.title
+
+    class Meta:
+        verbose_name = "ایمیل"
+        verbose_name_plural = "ایمیل‌ها"

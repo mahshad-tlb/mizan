@@ -3,10 +3,11 @@ from .models import Email
 from ckeditor.widgets import CKEditorWidget
 
 class EmailForm(forms.ModelForm):
-    متن = forms.CharField(widget=CKEditorWidget())
+    body = forms.CharField(label='متن', widget=CKEditorWidget(config_name='inline_style'))
+
     class Meta:
         model = Email
-        fields = ['عنوان', 'متن']  # فقط فیلدهای قابل ویرایش را اینجا می‌ذاریم
-        widgets = {
-            'متن': forms.Textarea(attrs={'rows': 5, 'cols': 40}),  # به متن شکل textarea می‌دهد
+        fields = ['title', 'body']
+        labels = {
+            'title': 'عنوان',
         }
