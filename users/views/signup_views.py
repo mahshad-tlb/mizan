@@ -7,7 +7,7 @@ from django.contrib.auth.hashers import make_password, check_password
 import logging
 from django.urls import reverse
 from users.utils.email import send_email
-
+import hashlib
 
 secondary_logger = logging.getLogger('users.secondary_password')
 logger = logging.getLogger('users.account')
@@ -47,11 +47,17 @@ def signup_view(request):
             )
 
             # ذخیره رمز دوم
-            hashed_secondary = make_password(secondary_password)
+            def hash_secondary_password(password: str) -> str:
+                return hashlib.sha256(password.encode('utf-8')).hexdigest()
+
+            # در جای مناسب در ویو یا تابع ذخیره‌سازی:
+            hashed_secondary = hash_secondary_password(secondary_password)
+
             SecondaryPassword.objects.create(
                 user=user,
                 password=hashed_secondary
             )
+
             secondary_logger.debug(f"🔑 رمز دوم هش‌شده برای {username}: {hashed_secondary}")
             secondary_logger.info(f"✅ رمز دوم برای کاربر {username} با موفقیت ذخیره شد.")
 
@@ -87,8 +93,22 @@ def login_view(request):
 
             try:
                 user = Users.objects.get(username=username)
+
                 if check_password(password, user.password):
-                    # ورود موفق (بدون بررسی رمز دوم)
+                    # چک فعال بودن حساب
+                    if not user.is_active:
+                        # بررسی وجود توکن فعال‌سازی در session
+                        pending_id = request.session.get('pending_activation_user_id')
+                        if pending_id and int(pending_id) == user.id:
+                            user.is_active = True
+                            user.save()
+                            del request.session['pending_activation_user_id']
+                            messages.success(request, "حساب شما با موفقیت فعال شد.")
+                        else:
+                            messages.error(request, "حساب شما فعال نیست. لطفاً ابتدا حساب خود را فعال کنید.")
+                            return render(request, "login.html", {"form": form})
+
+                    # ورود موفق و ذخیره در سشن
                     request.session['user_id'] = user.id
                     logger.info(f"User logged in successfully: {user.email}")
 
@@ -103,4 +123,3 @@ def login_view(request):
         form = LoginForm()
 
     return render(request, "login.html", {"form": form})
-

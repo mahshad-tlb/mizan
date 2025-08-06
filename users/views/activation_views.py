@@ -13,12 +13,12 @@ def activate_account(request, token):
 
     if activation_token.is_valid():
         user = activation_token.user
-        user.is_active = True
-        user.save()
+        # حساب هنوز فعال نشود
+        # فقط user_id را در session ذخیره می‌کنیم
+        request.session['pending_activation_user_id'] = user.id
 
-        activation_token.created_at = None
-        activation_token.save()
-
-        return redirect("home")
+        messages.success(request, "اکنون می‌توانید وارد حساب خود شوید تا فعال‌سازی کامل شود.")
+        return redirect("login")
     else:
         return render(request, "invalid_token.html")
+
