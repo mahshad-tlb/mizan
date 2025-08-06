@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block title %}Ticket{% endblock %}
+
+{% block content %}
+
+    <style>
+    .ticket-container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 30px;
+        background-color: #fff;
+        border: 1px solid #e0e0e0;
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .ticket-container h3 {
+        font-size: 22px;
+        margin-bottom: 25px;
+        color: #46ecd5;
+        text-align: right;
+        border-bottom: 2px solid #46ecd5;
+        padding-bottom: 8px;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+    }
+
+    form p {
+        margin: 0;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    textarea,
+    select {
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 15px;
+        width: 100%;
+        transition: border-color 0.3s ease;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+        border-color: #46ecd5;
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(70, 236, 213, 0.2);
+    }
+
+    button {
+        padding: 12px;
+        background-color: #46ecd5;
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+        background-color: #38c4b3;
+    }
+
+
+</style>
+
+<div class="ticket-container">
+    <h3>ارسال نظر</h3>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">ثبت نظر</button>
+    </form>
+</div>
+{% endblock %}

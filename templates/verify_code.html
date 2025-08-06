@@ -1,12 +1,99 @@
 {% extends 'base.html' %}
 {% block title %}تایید کد{% endblock %}
-{% block content %}
-<h2>کد تایید ارسال شده را وارد کنید</h2>
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.code.label_tag }}<br>
-    {{ form.code }}<br>
-    <button type="submit">تایید</button>
-</form>
+{% block content %}
+
+    <style>
+        body {
+            font-family: Vazirmatn, sans-serif;
+            background-color: #f9fafa;
+        }
+
+        .code-confirm-container {
+            max-width: 450px;
+            margin: 80px auto;
+            padding: 0 20px;
+        }
+
+        .code-confirm-box {
+            background-color: #fff;
+            padding: 40px 30px;
+            border-radius: 14px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+            border: 1px solid #eee;
+        }
+
+        .code-confirm-box h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #46ecd5;
+            font-size: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            text-align: right;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            font-size: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #46ecd5;
+        }
+
+        .form-group .errorlist {
+            color: red;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #46ecd5;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #3dcbb8;
+        }
+    </style>
+
+<div class="code-confirm-container">
+    <div class="code-confirm-box">
+        <h2>کد تایید ارسال شده را وارد کنید</h2>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                {{ form.code.label_tag }}
+                {{ form.code }}
+                {{ form.code.errors }}
+            </div>
+
+            <button type="submit">تایید</button>
+        </form>
+    </div>
+</div>
 {% endblock %}

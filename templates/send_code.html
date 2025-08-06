@@ -1,12 +1,108 @@
 {% extends 'base.html' %}
 {% block title %}ورود با شماره موبایل{% endblock %}
-{% block content %}
-<h2>شماره موبایل خود را وارد کنید</h2>
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.phone_number.label_tag }}<br>
-    {{ form.phone_number }}<br>
-    <button type="submit">ارسال کد</button>
-</form>
+{% block content %}
+
+    <style>
+        body {
+            font-family: Vazirmatn, sans-serif;
+            background-color: #f9fafa;
+        }
+
+        .phone-login-container {
+            max-width: 500px;
+            margin: 80px auto;
+            padding: 0 20px;
+        }
+
+        .phone-login-box {
+            background-color: #ffffff;
+            padding: 40px 30px;
+            border-radius: 14px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+            border: 1px solid #eee;
+        }
+
+        .phone-login-box h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #46ecd5;
+            font-size: 24px;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            text-align: right;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: border 0.3s ease;
+        }
+
+        .form-group input:focus {
+            border-color: #46ecd5;
+            outline: none;
+        }
+
+        .form-group .errorlist {
+            color: red;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #46ecd5;
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #3dcbb8;
+        }
+    </style>
+
+<div class="phone-login-container">
+    <div class="phone-login-box">
+        <h2>ورود با شماره موبایل</h2>
+        <p class="subtitle">لطفاً شماره موبایل خود را وارد کنید تا کد ورود برای شما ارسال شود.</p>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="form-group">
+                {{ form.phone_number.label_tag }}
+                {{ form.phone_number }}
+                {{ form.phone_number.errors }}
+            </div>
+
+            <button type="submit">ارسال کد</button>
+        </form>
+    </div>
+</div>
 {% endblock %}
