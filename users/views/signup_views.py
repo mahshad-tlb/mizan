@@ -88,6 +88,9 @@ def signup_view(request):
 
 
 
+from django.contrib.auth.hashers import check_password
+from django.utils import timezone
+
 def login_view(request):
     if request.method == "POST":
         form = LoginForm(request.POST)
@@ -98,18 +101,19 @@ def login_view(request):
             try:
                 user = Users.objects.get(username=username)
 
+                # ✅ مرحله 1: فعال‌سازی اگر لازم بود
                 if not user.is_active:
                     pending_id = request.session.get('pending_activation_user_id')
                     if pending_id and int(pending_id) == user.id:
                         user.is_active = True
                         user.save()
                         del request.session['pending_activation_user_id']
-                        messages.success(request, "حساب شما فعال شد.")
+                        messages.success(request, "حساب شما با موفقیت فعال شد.")
                     else:
-                        messages.error(request, "حساب شما فعال نیست.")
+                        messages.error(request, "حساب شما فعال نیست. لطفاً ابتدا حساب خود را فعال کنید.")
                         return render(request, "login.html", {"form": form})
 
-                # ✅ چک کردن رمز عبور با check_password
+                # ✅ مرحله 2: بررسی رمز عبور
                 if check_password(password, user.password):
                     request.session['user_id'] = user.id
                     user.last_login = timezone.now()
@@ -124,4 +128,3 @@ def login_view(request):
         form = LoginForm()
 
     return render(request, "login.html", {"form": form})
-
