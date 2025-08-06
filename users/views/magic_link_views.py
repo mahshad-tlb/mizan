@@ -3,12 +3,11 @@ import logging
 from datetime import timedelta
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.core.mail import send_mail
 from django.contrib.auth import login
 from django.utils import timezone
 from users.models import Users, LoginToken
 from users.forms.verification_forms import EmailForm
-
+from users.utils.email import send_email
 # تنظیم لاگر
 logger = logging.getLogger("users.email")
 
@@ -35,13 +34,15 @@ def send_magic_link(request):
             logger.debug(f"لینک ساخته شده برای ورود: {link}")
 
             try:
-                send_mail(
+
+
+                send_email(
                     subject="ورود سریع به سایت",
                     message=f"برای ورود روی این لینک کلیک کنید:\n{link}",
-                    from_email="mahshad@mtlb.erfann31dev.ir",
-                    recipient_list=[email],
-                    fail_silently=False
+                    recipient_email=email,
+                    from_email="mahshad@mtlb.erfann31dev.ir"
                 )
+
                 logger.info(f"ایمیل لینک ورود برای {email} ارسال شد.")
             except Exception as e:
                 logger.error(f"خطا در ارسال ایمیل برای {email}: {e}")
@@ -80,7 +81,6 @@ def magic_login(request, token):
         return render(request, "invalid_token.html")
 
     user = login_token.user
-    login(request, user)
     logger.info(f"کاربر {user.email} با موفقیت وارد شد با استفاده از توکن {token}")
 
     login_token.is_used = True

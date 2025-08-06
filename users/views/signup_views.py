@@ -5,11 +5,8 @@ from users.models import Users, SecondaryPassword, ActivationToken
 from users.forms.signup_forms import SignupForm, LoginForm
 from django.contrib.auth.hashers import make_password, check_password
 import logging
-from django.conf import settings
-from django.core.mail import send_mail
 from django.urls import reverse
-from django.contrib.auth import login, logout
-
+from users.utils.email import send_email
 
 
 secondary_logger = logging.getLogger('users.secondary_password')
@@ -68,14 +65,11 @@ def signup_view(request):
             )
 
             # ارسال ایمیل فعال‌سازی
-            send_mail(
+            send_email(
                 subject="فعالسازی حساب کاربری",
                 message=f"برای فعالسازی حساب کاربری‌تان روی لینک زیر کلیک کنید:\n{activation_link}",
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[email],
-                fail_silently=False
+                recipient_email=email
             )
-
             messages.success(request, "ثبت‌نام انجام شد. لطفاً ایمیل خود را برای فعال‌سازی حساب بررسی کنید.")
             return redirect('home')
     else:

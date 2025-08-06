@@ -1,13 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.http import HttpResponse
-from django.core.mail import send_mail
-
 from users.models import Users, LoginToken
-from users.forms.password_forms import ResetPasswordForm, NewPasswordForm
 from users.forms.verification_forms import EmailForm
 import secrets
-
+from users.utils.email import send_email
 
 def send_reset_link(request):
     if request.method == "POST":
@@ -25,12 +22,11 @@ def send_reset_link(request):
 
             link = request.build_absolute_uri(f"/reset-pass/{token}/")
 
-            send_mail(
+            send_email(
                 subject="بازیابی رمز عبور",
                 message=f"برای تغییر رمز عبور روی این لینک کلیک کنید:\n{link}",
-                from_email="mahshad@mtlb.erfann31dev.ir",
-                recipient_list=[email],
-                fail_silently=False
+                recipient_email=email,
+                from_email="mahshad@mtlb.erfann31dev.ir"
             )
 
             messages.success(request, "لینک بازیابی رمز عبور ارسال شد.")
