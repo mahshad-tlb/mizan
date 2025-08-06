@@ -80,6 +80,38 @@ def signup_view(request):
     return render(request, "signup.html", {"form": form})
 
 
+#def login_view(request):
+    #if request.method == "POST":
+        #form = LoginForm(request.POST)
+        #if form.is_valid():
+            #username = form.cleaned_data['username']
+            #password = form.cleaned_data['password']
+
+            #try:
+                #user = Users.objects.get(username=username)
+
+                #if check_password(password, user.password):
+                    #request.session['user_id'] = user.id
+                    #logger.info(f"User {username} logged in.")
+                    #return redirect('home')
+                #else:
+                    #logger.warning(f"Login failed for {username}: incorrect password.")
+                    #return render(request, "login.html", {
+                        #"form": form,
+                        #"custom_error": "رمز عبور اشتباه است.",
+                    #})
+
+            #except Users.DoesNotExist:
+                #logger.warning(f"Login attempt with unknown username: {username}")
+                #return render(request, "login.html", {
+                    #"form": form,
+                    #"custom_error": "کاربر وجود ندارد."
+                #})
+    #else:
+        #form = LoginForm()
+
+    #return render(request, "login.html", {"form": form})
+
 def login_view(request):
     if request.method == "POST":
         form = LoginForm(request.POST)
@@ -91,6 +123,14 @@ def login_view(request):
                 user = Users.objects.get(username=username)
 
                 if check_password(password, user.password):
+                    # بررسی اینکه آیا کاربر از طریق لینک فعال‌سازی آمده
+                    pending_id = request.session.get('pending_activation_user_id')
+                    if pending_id and pending_id == user.id:
+                        user.is_active = True
+                        user.save()
+                        del request.session['pending_activation_user_id']
+                        messages.success(request, "حساب شما با موفقیت فعال شد.")
+
                     request.session['user_id'] = user.id
                     logger.info(f"User {username} logged in.")
                     return redirect('home')
@@ -111,3 +151,4 @@ def login_view(request):
         form = LoginForm()
 
     return render(request, "login.html", {"form": form})
+
