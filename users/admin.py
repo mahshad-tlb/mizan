@@ -174,3 +174,10 @@ def custom_admin_index(request, extra_context=None):
 admin.site.original_index = admin.site.index
 # جایگزینی با نسخه سفارشی
 admin.site.index = custom_admin_index
+
+from django.contrib import admin
+
+def superuser_only(request):
+    return request.user.is_authenticated and request.user.is_superuser
+
+admin.site.has_permission = superuser_only

@@ -13,6 +13,7 @@ load_dotenv(BASE_DIR / ".env")
 SECRET_KEY = os.environ.get('SECRET_KEY')
 DEBUG = os.environ.get('DEBUG', 'False').lower() in ['true', '1']
 ALLOWED_HOSTS = ['*']
+
 # 📦 Installed apps
 INSTALLED_APPS = [
 'django.contrib.admin',
@@ -42,6 +43,7 @@ INSTALLED_APPS = [
 
 # 🧠 Middleware
 MIDDLEWARE = [
+    'users.middleware.session_per_admin.AdminPanelSessionMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -207,14 +209,37 @@ LOGGING = {
         'file_secondary_password': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': LOG_DIR / 'secondary_password.log',
+            'filename': os.path.join(BASE_DIR,'logs/users/secondary_password.log'),
             'formatter': 'verbose',
         },
+        'file_account': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR,'logs/users/account.log'),
+            'formatter': 'verbose',
+        },
+        'file_email': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR,'logs/users/email.log'),
+            'formatter': 'verbose',
+        },
+
     },
     'loggers': {
-        'second_pass': {
+        'secondary_password': {
             'handlers': ['file_secondary_password'],
             'level': 'DEBUG',
+            'propagate': False,
+        },
+        'account': {
+            'handlers': ['file_account'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'email': {
+            'handlers': ['file_email'],
+            'level': 'INFO',
             'propagate': False,
         },
     }
