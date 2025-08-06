@@ -1,18 +1,22 @@
 import secrets
+import hashlib
+import logging
+
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.urls import reverse
+from django.utils import timezone
+from django.contrib.auth.hashers import make_password, check_password
+
 from users.models import Users, SecondaryPassword, ActivationToken
 from users.forms.signup_forms import SignupForm, LoginForm
-from django.contrib.auth.hashers import make_password
-from django.contrib.auth.hashers import check_password
-from django.utils import timezone
-import logging
-from django.urls import reverse
 from users.utils.email import send_email
-import hashlib
 
+# لاگرها
 secondary_logger = logging.getLogger('users.secondary_password')
 logger = logging.getLogger('users.account')
+
+
 def signup_view(request):
     if request.method == "POST":
         form = SignupForm(request.POST)
@@ -24,8 +28,6 @@ def signup_view(request):
             secondary_password = form.cleaned_data['secondary_password']
 
             cleaned_phone_number = f'+98{phone_number}'
-
-            secondary_logger.debug(f"🔐 رمز دوم وارد شده برای {username}: {secondary_password}")
 
             if Users.objects.filter(email=email).exists():
                 messages.error(request, "این ایمیل قبلاً ثبت شده است.")
@@ -39,35 +41,26 @@ def signup_view(request):
                 messages.error(request, "این شماره موبایل قبلاً ثبت شده است.")
                 return render(request, "signup.html", {"form": form})
 
-            # ساخت کاربر (غیرفعال در ابتدا)
+            # ساخت کاربر (رمز هش شده در فیلد password)
             user = Users(
                 username=username,
                 email=email,
                 phone_number=cleaned_phone_number,
-                password=make_password(password),  # ← رمز عبور هش‌شده مستقیم ذخیره میشه
+                password=make_password(password),  # هش امن رمز عبور
             )
             user.save()
 
-            # ذخیره رمز دوم
-            def hash_secondary_password(password: str) -> str:
-                return hashlib.sha256(password.encode('utf-8')).hexdigest()
+            # هش رمز دوم با sha256
+            hashed_secondary = hashlib.sha256(secondary_password.encode('utf-8')).hexdigest()
+            SecondaryPassword.objects.create(user=user, password=hashed_secondary)
 
-            # در جای مناسب در ویو یا تابع ذخیره‌سازی:
-            hashed_secondary = hash_secondary_password(secondary_password)
+            secondary_logger.info(f"Secondary password set for user {username}")
+            logger.info(f"User {username} created and pending activation.")
 
-            SecondaryPassword.objects.create(
-                user=user,
-                password=hashed_secondary
-            )
-
-            secondary_logger.debug(f"{username}: {hashed_secondary}")
-            secondary_logger.info(f" {username} با موفقیت ذخیره شد.")
-
-            # ساخت توکن و لینک فعال‌سازی
+            # ساخت توکن فعال‌سازی
             token = secrets.token_urlsafe(32)
             ActivationToken.objects.create(user=user, token=token)
 
-            # build link
             activation_link = request.build_absolute_uri(
                 reverse("activate_account", kwargs={"token": token})
             )
@@ -78,15 +71,13 @@ def signup_view(request):
                 message=f"برای فعالسازی حساب کاربری‌تان روی لینک زیر کلیک کنید:\n{activation_link}",
                 recipient_email=email
             )
+
             messages.success(request, "ثبت‌نام انجام شد. لطفاً ایمیل خود را برای فعال‌سازی حساب بررسی کنید.")
             return redirect('home')
     else:
         form = SignupForm()
 
     return render(request, "signup.html", {"form": form})
-
-
-
 
 
 def login_view(request):
@@ -99,24 +90,19 @@ def login_view(request):
             try:
                 user = Users.objects.get(username=username)
 
-                # بررسی فقط برای تست، مقایسه مستقیم (خطرناک برای تولیدی!)
-                from django.contrib.auth.hashers import make_password
-                hashed_input = make_password(password)
-                print("رمز ورودی هش شده:", hashed_input)
-                print("رمز کاربر در DB:", user.password)
-
                 if check_password(password, user.password):
                     request.session['user_id'] = user.id
+                    logger.info(f"User {username} logged in.")
                     return redirect('home')
                 else:
+                    logger.warning(f"Login failed for {username}: incorrect password.")
                     return render(request, "login.html", {
                         "form": form,
-                        "custom_error": "❌ check_password مقدار False داده است.",
-                        "hashed_input": hashed_input,
-                        "stored_password": user.password,
+                        "custom_error": "رمز عبور اشتباه است.",
                     })
 
             except Users.DoesNotExist:
+                logger.warning(f"Login attempt with unknown username: {username}")
                 return render(request, "login.html", {
                     "form": form,
                     "custom_error": "کاربر وجود ندارد."
