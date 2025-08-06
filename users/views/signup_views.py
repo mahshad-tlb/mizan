@@ -60,8 +60,8 @@ def signup_view(request):
                 password=hashed_secondary
             )
 
-            secondary_logger.debug(f"🔑 رمز دوم هش‌شده برای {username}: {hashed_secondary}")
-            secondary_logger.info(f"✅ رمز دوم برای کاربر {username} با موفقیت ذخیره شد.")
+            secondary_logger.debug(f"{username}: {hashed_secondary}")
+            secondary_logger.info(f" {username} با موفقیت ذخیره شد.")
 
             # ساخت توکن و لینک فعال‌سازی
             token = secrets.token_urlsafe(32)
