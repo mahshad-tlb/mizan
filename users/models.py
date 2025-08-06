@@ -5,7 +5,7 @@ from django_jalali.db import models as jmodels
 from django.contrib.auth.models import PermissionsMixin, Group, Permission, BaseUserManager
 import logging
 from jdatetime import timedelta
-
+from django.contrib.auth.hashers import make_password
 logger = logging.getLogger('users')
 
 
@@ -53,6 +53,8 @@ class Users(PermissionsMixin, models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.username)
+        if self.password and not self.password.startswith('pbkdf2_'):  # چک کن رمز خام نباشه
+            self.password = make_password(self.password)
         super().save(*args, **kwargs)
 
     @classmethod
