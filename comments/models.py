@@ -1,14 +1,17 @@
 from django.db import models
 from django.utils.text import slugify
 from users.models import Users
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class Comment(models.Model):
     content = models.TextField(verbose_name="متن نظر")
-    is_approved = models.BooleanField(default=False, verbose_name="تایید شده؟")
+    is_approved = models.BooleanField(default=False, verbose_name="آیا تأیید شده؟")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="تاریخ ثبت")
     slug = models.SlugField(verbose_name="اسلاگ", blank=True, null=True, unique=True)
-    user = models.ForeignKey(Users, on_delete=models.CASCADE, related_name='comments',null=True)
+    user = models.ForeignKey(Users, on_delete=models.CASCADE, related_name='comments', null=True, verbose_name="کاربر")
 
     class Meta:
         verbose_name = "نظر"
@@ -16,7 +19,7 @@ class Comment(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        return f"نظر #{self.pk}"
+        return f"نظر شماره {self.pk}"
 
     def save(self, *args, **kwargs):
         if not self.slug and self.content:
@@ -30,19 +33,18 @@ class Comment(models.Model):
         super().save(*args, **kwargs)
 
 
-# core/models.py or reports/models.py
-from django.db import models
-from django.contrib.auth import get_user_model
-
-User = get_user_model()
-
 class Message(models.Model):
-    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages',null=True)
-    recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages',null=True)
-    subject = models.CharField(max_length=255)
-    content = models.TextField()
-    is_read = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages', null=True, verbose_name="فرستنده")
+    recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages', null=True, verbose_name="گیرنده")
+    subject = models.CharField(max_length=255, verbose_name="موضوع")
+    content = models.TextField(verbose_name="متن پیام")
+    is_read = models.BooleanField(default=False, verbose_name="خوانده شده؟")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="تاریخ ارسال")
+
+    class Meta:
+        verbose_name = "پیام"
+        verbose_name_plural = "پیام‌ها"
+        ordering = ['-created_at']
 
     def __str__(self):
-        return f"Message from {self.sender} to {self.recipient}"
+        return f"پیام از {self.sender} به {self.recipient}"

@@ -5,7 +5,7 @@ from users.models import Users
 from premailer import transform
 
 
-@admin.action(description="ارسال ایمیل انتخاب شده به همه کاربران")
+@admin.action(description="📨 ارسال ایمیل انتخاب‌شده به همه کاربران")
 def send_email_to_all(modeladmin, request, queryset):
     for email in queryset:
         subject = email.title
@@ -24,7 +24,7 @@ def send_email_to_all(modeladmin, request, queryset):
             fail_silently=False,
             html_message=html_message
         )
-    modeladmin.message_user(request, "ایمیل‌ها با موفقیت ارسال شدند!")
+    modeladmin.message_user(request, "✅ ایمیل‌ها با موفقیت ارسال شدند!")
 
 
 @admin.register(Email)
@@ -34,3 +34,11 @@ class EmailAdmin(admin.ModelAdmin):
     readonly_fields = ['slug', 'created_at', 'updated_at']
     ordering = ['-created_at']
     actions = [send_email_to_all]
+
+    # تنظیم عنوان فارسی برای بخش ادمین
+    def get_model_perms(self, request):
+        """
+        حذف دسترسی افزودن و حذف ایمیل‌ها از پنل در صورت نیاز.
+        """
+        perms = super().get_model_perms(request)
+        return perms

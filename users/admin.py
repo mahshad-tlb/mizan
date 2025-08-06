@@ -1,5 +1,3 @@
-# admin.py
-
 from django.contrib import admin
 from .models import AdminEmail, Users, SecondaryPassword, ActivationToken, Notification
 from django.core.mail import send_mail
@@ -72,7 +70,7 @@ class UsersAdmin(admin.ModelAdmin):
         workbook.save(response)
         return response
 
-    export_as_excel.short_description = "خروجی اکسل فارسی"
+    export_as_excel.short_description = "📤 خروجی اکسل کاربران"
 
     def export_as_pdf(self, request, queryset):
         users = list(queryset)
@@ -89,7 +87,7 @@ class UsersAdmin(admin.ModelAdmin):
             return HttpResponse('خطا در تولید فایل PDF', status=500)
         return response
 
-    export_as_pdf.short_description = "خروجی PDF فارسی"
+    export_as_pdf.short_description = "📄 خروجی PDF کاربران"
 
 
 @admin.register(AdminEmail)
@@ -112,9 +110,9 @@ class AdminEmailAdmin(admin.ModelAdmin):
                     html_message=message,
                     fail_silently=False,
                 )
-        self.message_user(request, "ایمیل‌ها با موفقیت ارسال شدند.", messages.SUCCESS)
+        self.message_user(request, "✅ ایمیل‌ها با موفقیت ارسال شدند.", messages.SUCCESS)
 
-    send_email_to_all_users.short_description = "ارسال ایمیل به همه کاربران"
+    send_email_to_all_users.short_description = "📧 ارسال ایمیل به همه کاربران"
 
 
 @admin.register(SecondaryPassword)
@@ -146,37 +144,32 @@ class SuperuserMessageAdmin(admin.ModelAdmin):
             message.save()
         return super().change_view(request, object_id, form_url, extra_context)
 
+
 # اگر قبلاً ثبت شده، پاک کن تا دوباره ثبتش کنیم
-    try:
-        admin.site.unregister(Message)
-    except admin.sites.NotRegistered:
-        pass
+try:
+    admin.site.unregister(Message)
+except admin.sites.NotRegistered:
+    pass
 
 admin.site.register(Message, SuperuserMessageAdmin)
 
 
-from django.contrib import admin
+# بازنویسی نمای index ادمین برای نمایش پیام‌های خوانده‌نشده
 from django.template.response import TemplateResponse
-from comments.models import Message
 
-# بازنویسی نمای index ادمین
 def custom_admin_index(request, extra_context=None):
-    print(" custom_admin_index called")
     if request.user.is_superuser:
-        print(f" Current user: {request.user}")
         messages_qs = Message.objects.filter(recipient=request.user, is_read=False)
-        print(f" Unread messages count: {messages_qs.count()}")
         extra_context = extra_context or {}
         extra_context['unread_messages_count'] = messages_qs.count()
     return admin.site.original_index(request, extra_context)
 
-# ذخیره نسخه اصلی
+# ذخیره نسخه اصلی و جایگزینی با نسخه سفارشی
 admin.site.original_index = admin.site.index
-# جایگزینی با نسخه سفارشی
 admin.site.index = custom_admin_index
 
-from django.contrib import admin
 
+# فقط سوپریوزرها اجازه ورود به پنل اصلی را داشته باشند
 def superuser_only(request):
     return request.user.is_authenticated and request.user.is_superuser
 

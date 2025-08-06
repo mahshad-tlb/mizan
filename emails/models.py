@@ -7,11 +7,11 @@ import logging
 logger = logging.getLogger(__name__)
 
 class Email(models.Model):
-    title = models.CharField("عنوان", max_length=100)
-    body = RichTextField("متن")
-    slug = models.SlugField("اسلاگ", unique=True, blank=True)
-    created_at = jmodels.jDateTimeField("تاریخ ایجاد", auto_now_add=True)
-    updated_at = jmodels.jDateTimeField("تاریخ بروزرسانی", auto_now=True)
+    title = models.CharField(verbose_name="عنوان", max_length=100)
+    body = RichTextField(verbose_name="متن")
+    slug = models.SlugField(verbose_name="اسلاگ", unique=True, blank=True)
+    created_at = jmodels.jDateTimeField(verbose_name="تاریخ ایجاد", auto_now_add=True)
+    updated_at = jmodels.jDateTimeField(verbose_name="تاریخ بروزرسانی", auto_now=True)
 
     def save(self, *args, **kwargs):
         is_new = self.pk is None

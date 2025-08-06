@@ -4,7 +4,6 @@ from django.utils import timezone
 from django_jalali.db import models as jmodels
 from django.contrib.auth.models import PermissionsMixin, Group, Permission, BaseUserManager
 import logging
-
 from jdatetime import timedelta
 
 logger = logging.getLogger('users')
@@ -69,15 +68,19 @@ class Users(PermissionsMixin, models.Model):
 
 
 class ActivationToken(models.Model):
-    user = models.ForeignKey(Users, on_delete=models.CASCADE, related_name="activation_tokens")
-    token = models.CharField(max_length=64, unique=True)
-    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    user = models.ForeignKey(Users, on_delete=models.CASCADE, related_name="activation_tokens", verbose_name="کاربر")
+    token = models.CharField(max_length=64, unique=True, verbose_name="توکن")
+    created_at = models.DateTimeField(auto_now_add=True, null=True, verbose_name="تاریخ ایجاد")
 
     def is_valid(self):
         if self.created_at is None:
             return False
         expiration_time = self.created_at + timedelta(days=1)
         return timezone.now() <= expiration_time
+
+    class Meta:
+        verbose_name = "توکن فعال‌سازی"
+        verbose_name_plural = "توکن‌های فعال‌سازی"
 
 
 class LoginToken(models.Model):
@@ -97,46 +100,57 @@ class LoginToken(models.Model):
 
 class SMSVerificationCode(models.Model):
     phone_number = models.CharField(max_length=20, unique=True, verbose_name="شماره موبایل")
-    code = models.CharField(max_length=6, verbose_name="کد تایید")
+    code = models.CharField(max_length=6, verbose_name="کد تأیید")
     created_at = models.DateTimeField(default=timezone.now, verbose_name="تاریخ ایجاد")
-    is_verified = models.BooleanField(default=False, verbose_name="تایید شده")
+    is_verified = models.BooleanField(default=False, verbose_name="تأیید شده")
 
     def __str__(self):
         return f"{self.phone_number} - {self.code}"
 
     def is_expired(self):
-        expiration_time = self.created_at + timedelta(minutes=5)  # اعتبار کد ۵ دقیقه
+        expiration_time = self.created_at + timedelta(minutes=5)
         return timezone.now() > expiration_time
 
     class Meta:
-        verbose_name = "کد تایید پیامکی"
-        verbose_name_plural = "کدهای تایید پیامکی"
+        verbose_name = "کد تأیید پیامکی"
+        verbose_name_plural = "کدهای تأیید پیامکی"
 
 
 class AdminEmail(models.Model):
-    subject = models.CharField(max_length=255)
-    body = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
+    subject = models.CharField(max_length=255, verbose_name="موضوع")
+    body = models.TextField(verbose_name="متن")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="تاریخ ایجاد")
 
     def __str__(self):
         return self.subject
 
+    class Meta:
+        verbose_name = "ایمیل ادمین"
+        verbose_name_plural = "ایمیل‌های ادمین"
+
 
 class SecondaryPassword(models.Model):
-    user = models.OneToOneField(Users, on_delete=models.CASCADE)
-    password = models.CharField(max_length=256, verbose_name="رمز دوم")  # رمزنگاری‌شده ذخیره میشه
+    user = models.OneToOneField(Users, on_delete=models.CASCADE, verbose_name="کاربر")
+    password = models.CharField(max_length=256, verbose_name="رمز دوم")
 
     def __str__(self):
-        return f"{self.user.username}'s secondary password"
+        return f"{self.user.username} - رمز دوم"
+
+    class Meta:
+        verbose_name = "رمز دوم"
+        verbose_name_plural = "رمزهای دوم"
 
 
-# core/models.py or notifications/models.py
 class Notification(models.Model):
-    recipient = models.ForeignKey(Users, on_delete=models.CASCADE)
-    message = models.CharField(max_length=255)
-    link = models.URLField(null=True, blank=True)
-    is_read = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
+    recipient = models.ForeignKey(Users, on_delete=models.CASCADE, verbose_name="دریافت‌کننده")
+    message = models.CharField(max_length=255, verbose_name="پیام")
+    link = models.URLField(null=True, blank=True, verbose_name="لینک")
+    is_read = models.BooleanField(default=False, verbose_name="خوانده شده؟")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="تاریخ ایجاد")
 
     def __str__(self):
-        return f"Notification to {self.recipient}"
+        return f"اعلان برای {self.recipient}"
+
+    class Meta:
+        verbose_name = "اعلان"
+        verbose_name_plural = "اعلان‌ها"
