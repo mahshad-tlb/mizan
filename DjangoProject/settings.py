@@ -224,6 +224,12 @@ LOGGING = {
             'filename': os.path.join(BASE_DIR,'logs/users/email.log'),
             'formatter': 'verbose',
         },
+        'file_email_service': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR,'logs/users/email_service.log'),
+            'formatter': 'verbose',
+        },
 
     },
     'loggers': {
@@ -239,6 +245,11 @@ LOGGING = {
         },
         'email': {
             'handlers': ['file_email'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'email_service': {
+            'handlers': ['file_email_service'],
             'level': 'INFO',
             'propagate': False,
         },
