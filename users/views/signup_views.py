@@ -3,7 +3,9 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from users.models import Users, SecondaryPassword, ActivationToken
 from users.forms.signup_forms import SignupForm, LoginForm
-from django.contrib.auth.hashers import make_password, check_password
+from django.contrib.auth.hashers import make_password
+from django.contrib.auth.hashers import check_password
+from django.utils import timezone
 import logging
 from django.urls import reverse
 from users.utils.email import send_email
@@ -84,6 +86,8 @@ def signup_view(request):
     return render(request, "signup.html", {"form": form})
 
 
+
+
 def login_view(request):
     if request.method == "POST":
         form = LoginForm(request.POST)
@@ -94,32 +98,30 @@ def login_view(request):
             try:
                 user = Users.objects.get(username=username)
 
+                if not user.is_active:
+                    pending_id = request.session.get('pending_activation_user_id')
+                    if pending_id and int(pending_id) == user.id:
+                        user.is_active = True
+                        user.save()
+                        del request.session['pending_activation_user_id']
+                        messages.success(request, "حساب شما فعال شد.")
+                    else:
+                        messages.error(request, "حساب شما فعال نیست.")
+                        return render(request, "login.html", {"form": form})
+
+                # ✅ چک کردن رمز عبور با check_password
                 if check_password(password, user.password):
-                    # چک فعال بودن حساب
-                    if not user.is_active:
-                        # بررسی وجود توکن فعال‌سازی در session
-                        pending_id = request.session.get('pending_activation_user_id')
-                        if pending_id and int(pending_id) == user.id:
-                            user.is_active = True
-                            user.save()
-                            del request.session['pending_activation_user_id']
-                            messages.success(request, "حساب شما با موفقیت فعال شد.")
-                        else:
-                            messages.error(request, "حساب شما فعال نیست. لطفاً ابتدا حساب خود را فعال کنید.")
-                            return render(request, "login.html", {"form": form})
-
-                    # ورود موفق و ذخیره در سشن
                     request.session['user_id'] = user.id
-                    logger.info(f"User logged in successfully: {user.email}")
-
+                    user.last_login = timezone.now()
+                    user.save()
+                    messages.success(request, "ورود موفق بود.")
                     return redirect('home')
                 else:
                     messages.error(request, "نام کاربری یا رمز عبور اشتباه است.")
-                    logger.warning(f"Failed login for user: {username} due to wrong password")
             except Users.DoesNotExist:
                 messages.error(request, "نام کاربری یا رمز عبور اشتباه است.")
-                logger.warning(f"Failed login attempt for non-existent user: {username}")
     else:
         form = LoginForm()
 
     return render(request, "login.html", {"form": form})
+
