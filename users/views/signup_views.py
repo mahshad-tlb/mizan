@@ -44,8 +44,8 @@ def signup_view(request):
                 username=username,
                 email=email,
                 phone_number=cleaned_phone_number,
+                password=make_password(password),  # ← رمز عبور هش‌شده مستقیم ذخیره میشه
             )
-            user.set_password(password)
             user.save()
 
             # ذخیره رمز دوم
