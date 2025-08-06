@@ -1,5 +1,110 @@
+{#{% extends 'base.html' %}#}
+{#{% block title %}خانه{% endblock %}#}
+{#{% block content %}#}
+{#<h2>{{ user.username }} به صفحه اصلی خوش آمدید،  😊</h2>#}
+{##}
+{#    <div style="margin: 80px 0 50px 0">#}
+{#        <h3>اطلاعات کاربری : </h3>#}
+{#        <p>ایمیل: {{ user.email }}</p>#}
+{#        <p>شماره موبایل: {{ user.phone_number }}</p>#}
+{#    </div>#}
+{##}
+{##}
+{#{% endblock %}#}
+
+
+
+
+
 {% extends 'base.html' %}
 {% block title %}خانه{% endblock %}
+
 {% block content %}
-<h2>به صفحه اصلی خوش آمدید، {{ username }} 😊</h2>
+
+    <style>
+    .dashboard-container {
+        max-width: 720px;
+        margin: 60px auto;
+        padding: 0 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+        font-family: Vazirmatn, sans-serif;
+    }
+
+    .welcome-card {
+        background-color: #46ecd5;
+        color: white;
+        padding: 35px 30px;
+        border-radius: 18px;
+        text-align: right;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+    }
+
+    .welcome-card h2 {
+        margin: 0 0 10px;
+        font-size: 26px;
+        font-weight: 700;
+    }
+
+    .subtitle {
+        font-size: 15px;
+        opacity: 0.95;
+    }
+
+    .info-card {
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 14px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+        border: 1px solid #eaeaea;
+    }
+
+    .info-card h3 {
+        font-size: 20px;
+        color: #46ecd5;
+        margin-bottom: 25px;
+        border-bottom: 2px solid #46ecd5;
+        display: inline-block;
+        padding-bottom: 6px;
+    }
+
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 12px 0;
+        border-bottom: 1px solid #f2f2f2;
+    }
+
+    .info-row:last-child {
+        border-bottom: none;
+    }
+
+    .label {
+        font-weight: 500;
+        color: #555;
+    }
+
+    .value {
+        color: #333;
+    }
+</style>
+
+<div class="dashboard-container">
+    <div class="welcome-card">
+        <h2>{{ user.username }} عزیز، خوش اومدی! 👋</h2>
+    </div>
+
+    <div class="info-card">
+        <h3>اطلاعات حساب</h3>
+        <div class="info-row">
+            <span class="label">ایمیل:</span>
+            <span class="value">{{ user.email }}</span>
+        </div>
+        <div class="info-row">
+            <span class="label">شماره موبایل:</span>
+            <span class="value">{{ user.phone_number }}</span>
+        </div>
+    </div>
+</div>
 {% endblock %}
