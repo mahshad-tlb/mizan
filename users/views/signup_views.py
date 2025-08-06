@@ -40,13 +40,13 @@ def signup_view(request):
                 return render(request, "signup.html", {"form": form})
 
             # ساخت کاربر (غیرفعال در ابتدا)
-            hashed_password = make_password(password)
-            user = Users.objects.create(
+            user = Users(
                 username=username,
-                password=hashed_password,
                 email=email,
                 phone_number=cleaned_phone_number,
             )
+            user.set_password(password)
+            user.save()
 
             # ذخیره رمز دوم
             def hash_secondary_password(password: str) -> str:
@@ -88,8 +88,6 @@ def signup_view(request):
 
 
 
-from django.contrib.auth.hashers import check_password
-from django.utils import timezone
 
 def login_view(request):
     if request.method == "POST":
@@ -101,29 +99,28 @@ def login_view(request):
             try:
                 user = Users.objects.get(username=username)
 
-                # ✅ مرحله 1: فعال‌سازی اگر لازم بود
-                if not user.is_active:
-                    pending_id = request.session.get('pending_activation_user_id')
-                    if pending_id and int(pending_id) == user.id:
-                        user.is_active = True
-                        user.save()
-                        del request.session['pending_activation_user_id']
-                        messages.success(request, "حساب شما با موفقیت فعال شد.")
-                    else:
-                        messages.error(request, "حساب شما فعال نیست. لطفاً ابتدا حساب خود را فعال کنید.")
-                        return render(request, "login.html", {"form": form})
+                # بررسی فقط برای تست، مقایسه مستقیم (خطرناک برای تولیدی!)
+                from django.contrib.auth.hashers import make_password
+                hashed_input = make_password(password)
+                print("رمز ورودی هش شده:", hashed_input)
+                print("رمز کاربر در DB:", user.password)
 
-                # ✅ مرحله 2: بررسی رمز عبور
                 if check_password(password, user.password):
                     request.session['user_id'] = user.id
-                    user.last_login = timezone.now()
-                    user.save()
-                    messages.success(request, "ورود موفق بود.")
                     return redirect('home')
                 else:
-                    messages.error(request, "نام کاربری یا رمز عبور اشتباه است.")
+                    return render(request, "login.html", {
+                        "form": form,
+                        "custom_error": "❌ check_password مقدار False داده است.",
+                        "hashed_input": hashed_input,
+                        "stored_password": user.password,
+                    })
+
             except Users.DoesNotExist:
-                messages.error(request, "نام کاربری یا رمز عبور اشتباه است.")
+                return render(request, "login.html", {
+                    "form": form,
+                    "custom_error": "کاربر وجود ندارد."
+                })
     else:
         form = LoginForm()
 
