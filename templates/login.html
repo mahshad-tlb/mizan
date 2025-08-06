@@ -1,5 +1,18 @@
 {% extends 'base.html' %}
 {% block title %}ورود کاربر{% endblock %}
+{% block header %}
+    <style>
+        .login{
+            {#font-size: 14px;#}
+            margin: 2px;
+            color: #0f74a8;
+        }
+        p{
+            margin: 7px;
+        }
+    </style>
+{% endblock %}
+
 {% block content %}
 <h2>ورود کاربر</h2>
 
@@ -16,7 +29,4 @@
 
     <button type="submit">ورود</button>
 </form>
-
-<a href="{% url 'send_reset_link' %}">ورود با لینک ایمیل</a>
-<a href="{% url 'send_code' %}">ورود با پیامک</a>
 {% endblock %}
