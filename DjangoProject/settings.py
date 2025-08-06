@@ -230,6 +230,12 @@ LOGGING = {
             'filename': os.path.join(BASE_DIR,'logs/users/email_service.log'),
             'formatter': 'verbose',
         },
+        'file_send_evening_emails': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR,'logs/users/send_evening_emails.log'),
+            'formatter': 'verbose',
+        }
 
     },
     'loggers': {
@@ -250,6 +256,11 @@ LOGGING = {
         },
         'email_service': {
             'handlers': ['file_email_service'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'send_evening_emails': {
+            'handlers': ['file_send_evening_emails'],
             'level': 'INFO',
             'propagate': False,
         },
