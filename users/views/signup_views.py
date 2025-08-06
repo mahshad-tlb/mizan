@@ -12,7 +12,7 @@ from users.models import Users, SecondaryPassword, ActivationToken
 from users.forms.signup_forms import SignupForm, LoginForm
 from users.utils.email import send_email
 
-# لاگرها
+# Loggers
 secondary_logger = logging.getLogger('users.secondary_password')
 logger = logging.getLogger('users.account')
 
@@ -41,23 +41,23 @@ def signup_view(request):
                 messages.error(request, "این شماره موبایل قبلاً ثبت شده است.")
                 return render(request, "signup.html", {"form": form})
 
-            # ساخت کاربر (رمز هش شده در فیلد password)
+            # Create user with hashed password
             user = Users(
                 username=username,
                 email=email,
                 phone_number=cleaned_phone_number,
-                password=make_password(password),  # هش امن رمز عبور
+                password=make_password(password),
             )
             user.save()
 
-            # هش رمز دوم با sha256
+            # Hash secondary password
             hashed_secondary = hashlib.sha256(secondary_password.encode('utf-8')).hexdigest()
             SecondaryPassword.objects.create(user=user, password=hashed_secondary)
 
             secondary_logger.info(f"Secondary password set for user {username}")
             logger.info(f"User {username} created and pending activation.")
 
-            # ساخت توکن فعال‌سازی
+            # Generate activation token
             token = secrets.token_urlsafe(32)
             ActivationToken.objects.create(user=user, token=token)
 
@@ -65,10 +65,10 @@ def signup_view(request):
                 reverse("activate_account", kwargs={"token": token})
             )
 
-            # ارسال ایمیل فعال‌سازی
+            # Send activation email
             send_email(
-                subject="فعالسازی حساب کاربری",
-                message=f"برای فعالسازی حساب کاربری‌تان روی لینک زیر کلیک کنید:\n{activation_link}",
+                subject="Account Activation",
+                message=f"Click the following link to activate your account:\n{activation_link}",
                 recipient_email=email
             )
 
@@ -90,19 +90,22 @@ def login_view(request):
             try:
                 user = Users.objects.get(username=username)
 
+                # Avoid using non-ASCII characters in print/log
+                # print("Hashed input password:", make_password(password))  ← remove if not needed
+
                 if check_password(password, user.password):
                     request.session['user_id'] = user.id
-                    logger.info(f"User {username} logged in.")
+                    logger.info(f"User {username} logged in successfully.")
                     return redirect('home')
                 else:
-                    logger.warning(f"Login failed for {username}: incorrect password.")
+                    logger.warning(f"Login failed for user {username}: incorrect password.")
                     return render(request, "login.html", {
                         "form": form,
                         "custom_error": "رمز عبور اشتباه است.",
                     })
 
             except Users.DoesNotExist:
-                logger.warning(f"Login attempt with unknown username: {username}")
+                logger.warning(f"Login failed: username '{username}' not found.")
                 return render(request, "login.html", {
                     "form": form,
                     "custom_error": "کاربر وجود ندارد."
