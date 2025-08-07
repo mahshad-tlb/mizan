@@ -13,7 +13,7 @@ class Command(BaseCommand):
         now = timezone.localtime(timezone.now())
 
 
-        if now.hour == 18 and now.minute == 0 and now.tzname() == 'Africa/Khartoum':
+        if True:
             User = get_user_model()
             users = User.objects.filter(is_active=True, email__isnull=False).exclude(email='')
 
