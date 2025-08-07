@@ -3,3 +3,7 @@ from .password_views import *
 from .magic_link_views import *
 from .sms_views import *
 from .user_views import *
+
+
+def logout_view(request):
+    return None

@@ -114,7 +114,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # 🌍 Internationalization
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'fa'
 TIME_ZONE = 'Asia/Tehran'
 USE_I18N = True
 USE_TZ = True
@@ -180,19 +180,19 @@ SMS_IR_TEMPLATE_ID = os.environ.get('SMS_IR_TEMPLATE_ID')
 SMS_IR_LINE_NUMBER = os.environ.get('SMS_IR_LINE_NUMBER')
 
 # 🧠 Redis cache (for rate limiting)
-REDIS_HOST = os.environ.get('REDIS_HOST', 'localhost')
-REDIS_PORT = int(os.environ.get('REDIS_PORT', 6379))
-REDIS_DB = int(os.environ.get('REDIS_DB', 0))
+# REDIS_HOST = os.environ.get('REDIS_HOST', 'localhost')
+# REDIS_PORT = int(os.environ.get('REDIS_PORT', 6379))
+# REDIS_DB = int(os.environ.get('REDIS_DB', 0))
 
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": f"redis://{REDIS_HOST}:{REDIS_PORT}/1",
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-        }
-    }
-}
+# CACHES = {
+#     "default": {
+#         "BACKEND": "django_redis.cache.RedisCache",
+#         "LOCATION": f"redis://{REDIS_HOST}:{REDIS_PORT}/1",
+#         "OPTIONS": {
+#             "CLIENT_CLASS": "django_redis.client.DefaultClient",
+#         }
+#     }
+# }
 
 # 📝 Logging
 LOG_DIR = BASE_DIR / 'logs'
