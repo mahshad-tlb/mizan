@@ -29,10 +29,11 @@ class HasCommentFilter(SimpleListFilter):
         )
 
     def queryset(self, request, queryset):
+        comment_user_ids = Comment.objects.filter(user_id__isnull=False).values_list('user_id', flat=True)
         if self.value() == 'yes':
-            return queryset.filter(id__in=Comment.objects.values_list('user_id', flat=True))
+            return queryset.filter(id__in=comment_user_ids)
         elif self.value() == 'no':
-            return queryset.exclude(id__in=Comment.objects.values_list('user_id', flat=True))
+            return queryset.exclude(id__in=comment_user_ids)
         return queryset
 
 
