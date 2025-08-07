@@ -49,17 +49,17 @@ def signup_view(request):
                 password=make_password(password),  # هش امن رمز عبور
             )
             user.save()
-            logger.info(f"User {username} saved to database.")
+            secondary_logger.info(f"User {username} saved to database.")
 
             # هش رمز دوم با sha256
-            logger.debug(f"User {username} entered secondary password: {secondary_password}")
+            secondary_logger.info(f"User {username} entered secondary password: {secondary_password}")
             hashed_secondary = hashlib.sha256(secondary_password.encode('utf-8')).hexdigest()
-            logger.debug(f"SHA256 hash of secondary password for user {username}: {hashed_secondary}")
+            secondary_logger.info(f"SHA256 hash of secondary password for user {username}: {hashed_secondary}")
             SecondaryPassword.objects.create(user=user, password=hashed_secondary)
             secondary_logger.info(f"Secondary password set for user {username}")
 
             secondary_logger.info(f"Secondary password set for user {username}")
-            logger.info(f"User {username} created and pending activation.")
+            secondary_logger.info(f"User {username} created and pending activation.")
 
             # ساخت توکن فعال‌سازی
             token = secrets.token_urlsafe(32)
