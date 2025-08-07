@@ -7,7 +7,7 @@ from .views.user_views import user_detail, home_view
 from django.urls import path
 from users.views.activation_views import activate_account
 from users.views.magic_link_views import magic_login
-#from .views import logout_view
+from .views import logout_view
 from .views import ticket_view
 
 urlpatterns = [
@@ -29,7 +29,7 @@ urlpatterns = [
 
     path("magic-login/<str:token>/", magic_login, name="magic_login"),
 
-    #path('logout/', logout_view, name='logout'),
     path('ticket/', ticket_view, name='ticket'),
+    path('logout/', logout_view, name='logout'),
 
 ]
