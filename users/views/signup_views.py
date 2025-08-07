@@ -49,8 +49,10 @@ def signup_view(request):
                 password=make_password(password),  # هش امن رمز عبور
             )
             user.save()
+            logger.info(f"User {username} saved to database.")
 
             # هش رمز دوم با sha256
+            logger.debug(f"Hashing secondary password for user {username}")
             hashed_secondary = hashlib.sha256(secondary_password.encode('utf-8')).hexdigest()
             SecondaryPassword.objects.create(user=user, password=hashed_secondary)
 
@@ -150,3 +152,13 @@ def login_view(request):
         #form = LoginForm()
 
     #return render(request, "login.html", {"form": form})
+
+def logout_view(request):
+    # پاک کردن session مربوط به کاربر
+    if 'user_id' in request.session:
+        del request.session['user_id']
+        messages.success(request, "با موفقیت خارج شدید.")
+    else:
+        messages.info(request, "شما وارد نشده‌اید.")
+
+    return render(request, 'logout.html')
