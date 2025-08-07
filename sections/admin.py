@@ -6,7 +6,7 @@ from .forms import SectionAdminForm
 @admin.register(Section)
 class SectionAdmin(SortableAdminMixin, admin.ModelAdmin):
     form = SectionAdminForm
-    list_display = ['title', 'parent', 'tree_order']
+    list_display = ['title', 'parent', 'order', 'tree_order']
     list_filter = ['parent']
 
     def tree_order(self, obj):
