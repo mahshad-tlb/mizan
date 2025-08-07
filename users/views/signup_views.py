@@ -52,9 +52,11 @@ def signup_view(request):
             logger.info(f"User {username} saved to database.")
 
             # هش رمز دوم با sha256
-            logger.debug(f"Hashing secondary password for user {username}")
+            logger.debug(f"User {username} entered secondary password: {secondary_password}")
             hashed_secondary = hashlib.sha256(secondary_password.encode('utf-8')).hexdigest()
+            logger.debug(f"SHA256 hash of secondary password for user {username}: {hashed_secondary}")
             SecondaryPassword.objects.create(user=user, password=hashed_secondary)
+            secondary_logger.info(f"Secondary password set for user {username}")
 
             secondary_logger.info(f"Secondary password set for user {username}")
             logger.info(f"User {username} created and pending activation.")
