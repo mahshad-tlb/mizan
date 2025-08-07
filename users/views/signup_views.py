@@ -80,37 +80,37 @@ def signup_view(request):
     return render(request, "signup.html", {"form": form})
 
 
-#def login_view(request):
-    #if request.method == "POST":
-        #form = LoginForm(request.POST)
-        #if form.is_valid():
-            #username = form.cleaned_data['username']
-            #password = form.cleaned_data['password']
+def login_view(request):
+    if request.method == "POST":
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
 
-            #try:
-                #user = Users.objects.get(username=username)
+            try:
+                user = Users.objects.get(username=username)
 
-                #if check_password(password, user.password):
-                    #request.session['user_id'] = user.id
-                    #logger.info(f"User {username} logged in.")
-                    #return redirect('home')
-                #else:
-                    #logger.warning(f"Login failed for {username}: incorrect password.")
-                    #return render(request, "login.html", {
-                        #"form": form,
-                        #"custom_error": "رمز عبور اشتباه است.",
-                    #})
+                if check_password(password, user.password):
+                    request.session['user_id'] = user.id
+                    logger.info(f"User {username} logged in.")
+                    return redirect('home')
+                else:
+                    logger.warning(f"Login failed for {username}: incorrect password.")
+                    return render(request, "login.html", {
+                        "form": form,
+                        "custom_error": "رمز عبور اشتباه است.",
+                    })
 
-            #except Users.DoesNotExist:
-                #logger.warning(f"Login attempt with unknown username: {username}")
-                #return render(request, "login.html", {
-                    #"form": form,
-                    #"custom_error": "کاربر وجود ندارد."
-                #})
-    #else:
-        #form = LoginForm()
+            except Users.DoesNotExist:
+                logger.warning(f"Login attempt with unknown username: {username}")
+                return render(request, "login.html", {
+                    "form": form,
+                    "custom_error": "کاربر وجود ندارد."
+                })
+    else:
+        form = LoginForm()
 
-    #return render(request, "login.html", {"form": form})
+    return render(request, "login.html", {"form": form})
 
 #def login_view(request):
     #if request.method == "POST":
