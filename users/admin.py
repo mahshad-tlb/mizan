@@ -38,9 +38,8 @@ class HasCommentFilter(SimpleListFilter):
 
         if self.value() == 'yes':
             return queryset.filter(id__in=user_ids)
-        elif self.value() == 'no':
+        else:
             return queryset.exclude(id__in=user_ids)
-        return queryset
 
 
 @admin.register(Users)
