@@ -71,6 +71,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'users.context_processors.custom_user_context',
 
             ],
         },
@@ -238,6 +239,12 @@ LOGGING = {
             'class': 'logging.FileHandler',
             'filename': str(os.path.join(BASE_DIR,'logs/users/send_evening_emails.log')),
             'formatter': 'verbose',
+        },
+        'file_sms': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': str(os.path.join(BASE_DIR,'logs/users/sms.log')),
+            'formatter': 'verbose',
         }
 
     },
@@ -264,6 +271,11 @@ LOGGING = {
         },
         'users.send_evening_emails': {
             'handlers': ['file_send_evening_emails'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'users.sms': {
+            'handlers': ['file_sms'],
             'level': 'INFO',
             'propagate': False,
         },
