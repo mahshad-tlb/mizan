@@ -20,7 +20,6 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
-
 class HasCommentFilter(SimpleListFilter):
     title = 'وضعیت نظر'
     parameter_name = 'has_comment'
@@ -32,14 +31,15 @@ class HasCommentFilter(SimpleListFilter):
         )
 
     def queryset(self, request, queryset):
-        user_ids = Comment.objects.annotate(
-            user_id_int=Cast('user_id', output_field=IntegerField())
-        ).values_list('user_id_int', flat=True).distinct()
+        # به جای cast مستقیم user_id ها رو می‌گیریم
+        user_ids = Comment.objects.values_list('user_id', flat=True).distinct()
 
         if self.value() == 'yes':
             return queryset.filter(id__in=user_ids)
-        else:
+        elif self.value() == 'no':
             return queryset.exclude(id__in=user_ids)
+        return queryset
+
 
 
 @admin.register(Users)
