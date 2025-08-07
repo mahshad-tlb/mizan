@@ -1,3 +1,4 @@
+import random
 
 from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
@@ -9,8 +10,8 @@ class Command(BaseCommand):
         User = get_user_model()
 
         for i in range(10):
-            username = f'testuser{i}'
-            email = f'testuser{i}@example.com'
+            username = f'testuser{random.randint(1, 1515511)}'
+            email = f'testuser{random.randint(1, 1515511)}@example.com'
             password = 'testpassword123'
 
             if not User.objects.filter(username=username).exists():
