@@ -195,6 +195,9 @@ CACHES = {
 # 📝 Logging
 LOG_DIR = BASE_DIR / 'logs'
 LOG_DIR.mkdir(exist_ok=True)
+# ساخت مسیر logs/users
+users_log_dir = BASE_DIR / 'logs' / 'users'
+users_log_dir.mkdir(parents=True, exist_ok=True)
 
 LOGGING = {
     'version': 1,
@@ -209,57 +212,57 @@ LOGGING = {
         'file_secondary_password': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR,'logs/users/secondary_password.log'),
+            'filename': str(os.path.join(BASE_DIR,'logs/users/secondary_password.log')),
             'formatter': 'verbose',
         },
         'file_account': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR,'logs/users/account.log'),
+            'filename': str(os.path.join(BASE_DIR,'logs/users/account.log')),
             'formatter': 'verbose',
         },
         'file_email': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR,'logs/users/email.log'),
+            'filename': str(os.path.join(BASE_DIR,'logs/users/email.log')),
             'formatter': 'verbose',
         },
         'file_email_service': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR,'logs/users/email_service.log'),
+            'filename': str(os.path.join(BASE_DIR,'logs/users/email_service.log')),
             'formatter': 'verbose',
         },
         'file_send_evening_emails': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR,'logs/users/send_evening_emails.log'),
+            'filename': str(os.path.join(BASE_DIR,'logs/users/send_evening_emails.log')),
             'formatter': 'verbose',
         }
 
     },
     'loggers': {
-        'secondary_password': {
+        'users.secondary_password': {
             'handlers': ['file_secondary_password'],
             'level': 'DEBUG',
             'propagate': False,
         },
-        'account': {
+        'users.account': {
             'handlers': ['file_account'],
             'level': 'INFO',
             'propagate': False,
         },
-        'email': {
+        'users.email': {
             'handlers': ['file_email'],
             'level': 'INFO',
             'propagate': False,
         },
-        'email_service': {
+        'users.email_service': {
             'handlers': ['file_email_service'],
             'level': 'INFO',
             'propagate': False,
         },
-        'send_evening_emails': {
+        'users.send_evening_emails': {
             'handlers': ['file_send_evening_emails'],
             'level': 'INFO',
             'propagate': False,
