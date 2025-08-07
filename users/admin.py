@@ -1,4 +1,7 @@
 from django.contrib import admin
+from django.db.models import IntegerField
+from django.db.models.functions import Cast
+
 from .models import AdminEmail, Users, SecondaryPassword, ActivationToken, Notification
 from django.core.mail import send_mail
 from django.contrib import messages
@@ -29,11 +32,14 @@ class HasCommentFilter(SimpleListFilter):
         )
 
     def queryset(self, request, queryset):
-        comment_user_ids = Comment.objects.filter(user_id__isnull=False).values_list('user_id', flat=True)
+        user_ids = Comment.objects.annotate(
+            user_id_int=Cast('user_id', output_field=IntegerField())
+        ).values_list('user_id_int', flat=True).distinct()
+
         if self.value() == 'yes':
-            return queryset.filter(id__in=comment_user_ids)
+            return queryset.filter(id__in=user_ids)
         elif self.value() == 'no':
-            return queryset.exclude(id__in=comment_user_ids)
+            return queryset.exclude(id__in=user_ids)
         return queryset
 
 
@@ -154,9 +160,9 @@ except admin.sites.NotRegistered:
 
 admin.site.register(Message, SuperuserMessageAdmin)
 
-
 # بازنویسی نمای index ادمین برای نمایش پیام‌های خوانده‌نشده
 from django.template.response import TemplateResponse
+
 
 def custom_admin_index(request, extra_context=None):
     if request.user.is_superuser:
@@ -164,6 +170,7 @@ def custom_admin_index(request, extra_context=None):
         extra_context = extra_context or {}
         extra_context['unread_messages_count'] = messages_qs.count()
     return admin.site.original_index(request, extra_context)
+
 
 # ذخیره نسخه اصلی و جایگزینی با نسخه سفارشی
 admin.site.original_index = admin.site.index
@@ -173,5 +180,6 @@ admin.site.index = custom_admin_index
 # فقط سوپریوزرها اجازه ورود به پنل اصلی را داشته باشند
 def superuser_only(request):
     return request.user.is_authenticated and request.user.is_superuser
+
 
 admin.site.has_permission = superuser_only
