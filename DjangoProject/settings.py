@@ -71,6 +71,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'comments.context_processors.unread_messages_count',
                 'users.context_processors.custom_user_context',
 
             ],
@@ -283,3 +284,8 @@ LOGGING = {
 }
 
 PASSWORD_RESET_TIMEOUT =60 * 60 * 24
+
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+RATE_LIMIT_ENABLED = True
