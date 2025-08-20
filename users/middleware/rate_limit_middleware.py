@@ -5,7 +5,7 @@ from django.http import JsonResponse
 class RedisRateLimitMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
-        self.rate_limit = 10
+        self.rate_limit = 1000
         self.rate_limit_duration = 300
         self.block_duration = 120
         self.block_allowance = 2
