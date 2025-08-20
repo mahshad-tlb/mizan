@@ -1,0 +1,25 @@
+<table>
+  <tr>
+    <th>مهارت</th>
+    <th>امتیاز</th>
+    <th>پیشرفت (%)</th>
+    <th>اقدام</th>
+  </tr>
+  {% for s in skills %}
+  <tr>
+    <td>{{ s.Skill }}</td>
+    <td>{{ s.Score }}</td>
+    <td>
+      <progress value="{{ s.Score }}" max="{{ max_score }}"></progress>
+      {{ s.ScorePercent }}%
+    </td>
+    <td>
+      <form method="post" action="{% url 'skills:update_skill' forloop.counter0 %}">
+        {% csrf_token %}
+        <button name="delta" value="1">👍</button>
+        <button name="delta" value="-1">👎</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
